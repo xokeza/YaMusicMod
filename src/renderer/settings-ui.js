@@ -524,3 +524,4 @@
 
   window.__yamSettingsUI = { open: openPanel, close: closePanel };
 })();
+

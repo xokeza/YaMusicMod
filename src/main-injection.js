@@ -217,3 +217,4 @@ app.on('browser-window-created', (_event, win) => {
 });
 
 console.log('[YaMod] Main injection загружен ✓');
+

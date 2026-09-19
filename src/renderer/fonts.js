@@ -47,3 +47,4 @@
     apply: applyFont,
   };
 })();
+

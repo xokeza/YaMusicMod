@@ -70,3 +70,4 @@ main().catch((err) => {
   console.error('❌ Критическая ошибка:', err.message);
   process.exit(1);
 });
+

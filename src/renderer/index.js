@@ -29,3 +29,4 @@
 
   console.log('[YaMod] Renderer загружен ✓');
 })();
+

@@ -54,3 +54,4 @@ console.log('✅ Сборка завершена → build/');
 console.log('   renderer/index.js — бандл renderer');
 console.log('   main-injection.js — main process');
 console.log('   preload.js        — preload bridge');
+

@@ -35,3 +35,4 @@ contextBridge.exposeInMainWorld('yaModIPC', {
     }
   },
 });
+

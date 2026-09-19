@@ -1,7 +1,7 @@
 {
   "name": "yamusic-mod",
   "version": "1.0.0",
-  "description": "Мод для Яндекс Музыки",
+  "description": "Мод для Яндекс Музыки — Discord RPC, скачивание треков, кастомные шрифты",
   "author": "xokeza",
   "license": "MIT",
   "repository": {
@@ -26,3 +26,4 @@
     "node": ">=18.0.0"
   }
 }
+

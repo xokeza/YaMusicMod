@@ -59,3 +59,4 @@ jobs:
             YaMusicMod-${{ github.ref_name }}-linux.tar.gz
           draft: false
           prerelease: false
+
