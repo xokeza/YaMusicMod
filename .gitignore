@@ -1,0 +1,8 @@
+node_modules/
+build/
+dist/
+*.asar.bak
+.env
+.DS_Store
+Thumbs.db
+*.log

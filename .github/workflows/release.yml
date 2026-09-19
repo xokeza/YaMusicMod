@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build bundle
+        run: node build.js
+
+      - name: Download yt-dlp binaries
+        run: |
+          mkdir -p build/bin
+          curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o build/bin/yt-dlp
+          curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -o build/bin/yt-dlp.exe
+          chmod +x build/bin/yt-dlp
+
+      - name: Create release archives
+        run: |
+          cd build
+          zip -r ../YaMusicMod-${{ github.ref_name }}-universal.zip .
+          tar -czf ../YaMusicMod-${{ github.ref_name }}-linux.tar.gz .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: YaMusicMod ${{ github.ref_name }}
+          body: |
+            ## YaMusicMod ${{ github.ref_name }}
+
+            ### Установка
+            1. Скачай архив для своей платформы
+            2. Распакуй
+            3. Запусти: `node patcher/index.js`
+
+            ### Что нового
+            Смотри [CHANGELOG](https://github.com/xokeza/YaMusicMod/commits/main)
+          files: |
+            YaMusicMod-${{ github.ref_name }}-universal.zip
+            YaMusicMod-${{ github.ref_name }}-linux.tar.gz
+          draft: false
+          prerelease: false

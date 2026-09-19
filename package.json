@@ -1,0 +1,28 @@
+{
+  "name": "yamusic-mod",
+  "version": "1.0.0",
+  "description": "Мод для Яндекс Музыки",
+  "author": "xokeza",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xokeza/YaMusicMod.git"
+  },
+  "scripts": {
+    "patch": "node patcher/index.js",
+    "unpatch": "node patcher/index.js --unpatch",
+    "build": "node build.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@electron/asar": "^3.2.10",
+    "discord-rpc": "^4.0.1",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
