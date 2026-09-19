@@ -11,12 +11,10 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 
-// ─── Discord RPC ─────────────────────────────────────────────────────────────
 
 let rpcClient = null;
 let rpcReady = false;
 
-// Discord Application ID — можно сменить в настройках мода
 const DEFAULT_CLIENT_ID = '1381234567890123456';
 
 function getSettings() {
@@ -93,9 +91,7 @@ function updateActivity(trackData) {
   }
 }
 
-// ─── IPC обработчики ──────────────────────────────────────────────────────────
 
-// Инициализация RPC при запуске, если включён
 app.whenReady().then(() => {
   const settings = getSettings();
   if (settings?.discordRpc?.enabled) {
@@ -104,12 +100,10 @@ app.whenReady().then(() => {
   }
 });
 
-// Трек сменился — обновляем RPC
 ipcMain.on('ya-mod:track-changed', (_event, trackData) => {
   updateActivity(trackData);
 });
 
-// Включить/выключить RPC из настроек
 ipcMain.on('ya-mod:rpc-toggle', (_event, { enabled, clientId }) => {
   if (enabled) {
     startRPC(clientId || DEFAULT_CLIENT_ID);
@@ -118,7 +112,6 @@ ipcMain.on('ya-mod:rpc-toggle', (_event, { enabled, clientId }) => {
   }
 });
 
-// Сохранить настройки
 ipcMain.handle('ya-mod:save-settings', (_event, settings) => {
   try {
     const settingsPath = path.join(app.getPath('userData'), 'ya-mod-settings.json');
@@ -129,19 +122,16 @@ ipcMain.handle('ya-mod:save-settings', (_event, settings) => {
   }
 });
 
-// Загрузить настройки
 ipcMain.handle('ya-mod:load-settings', () => {
   return getSettings();
 });
 
-// ─── Скачивание через yt-dlp ──────────────────────────────────────────────────
 
 function getYtDlpPath() {
   const modDir = path.dirname(__filename);
   const binName = process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp';
   const bundled = path.join(modDir, '..', 'bin', binName);
   if (fs.existsSync(bundled)) return bundled;
-  // Фоллбэк — системный yt-dlp
   return binName;
 }
 
@@ -199,15 +189,10 @@ ipcMain.on('ya-mod:download-playlist', (event, payload) => {
   downloadWithYtDlp(event, { ...payload, playlist: true });
 });
 
-// ─── Инжектируем preload в новые окна ────────────────────────────────────────
-
 const { BrowserWindow } = require('electron');
 const PRELOAD_PATH = path.join(__dirname, 'preload.js');
 
-// Перехватываем создание каждого нового окна и добавляем наш preload
 app.on('browser-window-created', (_event, win) => {
-  // Electron не позволяет переопределить preload после создания окна,
-  // поэтому используем webContents API для инжекции скрипта при загрузке
   win.webContents.on('dom-ready', () => {
     const rendererCode = fs.readFileSync(path.join(__dirname, 'renderer', 'index.js'), 'utf8');
     win.webContents.executeJavaScript(rendererCode).catch((err) => {

@@ -36,27 +36,86 @@ jobs:
 
       - name: Create release archives
         run: |
+          cp README.md build/README.md
+          cp package.json build/package.json
+          cp -r patcher build/patcher
           cd build
-          zip -r ../YaMusicMod-${{ github.ref_name }}-universal.zip .
+          zip -r ../YaMusicMod-${{ github.ref_name }}-windows.zip . -x "*.sh"
           tar -czf ../YaMusicMod-${{ github.ref_name }}-linux.tar.gz .
+
+      - name: Get version number
+        id: version
+        run: echo "num=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: YaMusicMod ${{ github.ref_name }}
+          name: "YaMusicMod ${{ github.ref_name }}"
           body: |
-            ## YaMusicMod ${{ github.ref_name }}
+            <div align="center">
 
-            ### Установка
-            1. Скачай архив для своей платформы
-            2. Распакуй
-            3. Запусти: `node patcher/index.js`
+            ## 🎵 YaMusicMod ${{ github.ref_name }}
 
-            ### Что нового
-            Смотри [CHANGELOG](https://github.com/xokeza/YaMusicMod/commits/main)
+            **Первый публичный релиз мода для Яндекс Музыки**
+
+            </div>
+
+            ---
+
+            ### ✨ Что включено
+
+            | Функция | Описание |
+            |---------|----------|
+            | 🎮 **Discord RPC** | Текущий трек с обложкой в профиле Discord |
+            | ⬇ **Скачивание** | Трек или плейлист в MP3 (128/192/320 kbps) через yt-dlp |
+            | 🔤 **Шрифты** | Inter, Nunito, Rubik, Manrope, Space Grotesk |
+            | ⚙ **Настройки** | Панель настроек прямо в интерфейсе ЯМ |
+
+            ---
+
+            ### 📦 Установка
+
+            #### Windows
+            1. Скачай **YaMusicMod-${{ github.ref_name }}-windows.zip**
+            2. Распакуй в любую папку
+            3. Открой терминал в этой папке и выполни:
+            ```
+            npm install
+            node patcher/index.js
+            ```
+
+            #### Linux
+            1. Скачай **YaMusicMod-${{ github.ref_name }}-linux.tar.gz**
+            2. Распакуй:
+            ```bash
+            tar -xzf YaMusicMod-${{ github.ref_name }}-linux.tar.gz
+            ```
+            3. Установи:
+            ```bash
+            npm install
+            node patcher/index.js
+            ```
+
+            ---
+
+            ### 🔄 Удаление мода
+            ```bash
+            node patcher/index.js --unpatch
+            ```
+
+            ---
+
+            ### ⚠ Требования
+            - Node.js ≥ 18
+            - Установленный [Яндекс Музыка](https://music.yandex.ru/download/) (десктопный клиент)
+            - Discord (для RPC)
+
+            ---
+
+            > 💬 Нашёл баг или есть идея? [Открой issue](https://github.com/xokeza/YaMusicMod/issues)
           files: |
-            YaMusicMod-${{ github.ref_name }}-universal.zip
+            YaMusicMod-${{ github.ref_name }}-windows.zip
             YaMusicMod-${{ github.ref_name }}-linux.tar.gz
           draft: false
           prerelease: false
-
+          make_latest: true

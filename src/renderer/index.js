@@ -11,7 +11,6 @@
 
   console.log('[YaMod] Инициализация renderer...');
 
-  // Порядок важен: сначала шрифты и observer, потом UI
   const scripts = [
     __YAM_FONTS__,
     __YAM_TRACK_OBSERVER__,
@@ -20,7 +19,6 @@
 
   for (const code of scripts) {
     try {
-      // eslint-disable-next-line no-new-func
       new Function(code)();
     } catch (err) {
       console.error('[YaMod] Ошибка модуля:', err);

@@ -19,7 +19,7 @@ const fontsCode = fs.readFileSync(path.join(SRC, 'renderer', 'fonts.js'), 'utf8'
 const observerCode = fs.readFileSync(path.join(SRC, 'renderer', 'track-observer.js'), 'utf8');
 const settingsCode = fs.readFileSync(path.join(SRC, 'renderer', 'settings-ui.js'), 'utf8');
 
-// Собираем bundle renderer'а
+// Собираем bundle renderer
 let rendererBundle = fs.readFileSync(path.join(SRC, 'renderer', 'index.js'), 'utf8');
 
 const escape = (s) => JSON.stringify(s);

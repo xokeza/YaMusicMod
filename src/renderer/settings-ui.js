@@ -7,8 +7,6 @@
 (function () {
   'use strict';
 
-  // ─── Настройки по умолчанию ───────────────────────────────────────────────
-
   const DEFAULT_SETTINGS = {
     discordRpc: {
       enabled: false,
@@ -24,7 +22,6 @@
     },
   };
 
-  // ─── Хранилище настроек ───────────────────────────────────────────────────
 
   async function loadSettings() {
     try {
@@ -33,7 +30,6 @@
         return { ...DEFAULT_SETTINGS, ...s };
       }
     } catch (_) {}
-    // Фоллбэк на localStorage (для браузерной версии)
     try {
       const raw = localStorage.getItem('ya-mod-settings');
       if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
@@ -52,7 +48,6 @@
     } catch (_) {}
   }
 
-  // ─── HTML/CSS панели настроек ─────────────────────────────────────────────
 
   const PANEL_CSS = `
     :host {
@@ -123,7 +118,6 @@
     .label { font-size: 14px; color: #ccc; }
     .label small { display: block; font-size: 11px; color: #666; margin-top: 2px; }
 
-    /* Toggle switch */
     .toggle {
       position: relative;
       width: 44px;
@@ -153,7 +147,6 @@
     }
     .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
 
-    /* Inputs */
     input[type="text"], select {
       background: #12121f;
       border: 1px solid rgba(255,255,255,0.12);
@@ -170,7 +163,6 @@
     input[type="text"].full { width: 100%; box-sizing: border-box; margin-top: 8px; }
     select { cursor: pointer; }
 
-    /* Кнопки */
     .btn {
       padding: 10px 20px;
       border-radius: 10px;
@@ -192,7 +184,6 @@
       margin-top: 24px;
     }
 
-    /* Download progress */
     .download-section input[type="text"] { width: 100%; box-sizing: border-box; margin-top: 8px; }
     .progress-log {
       margin-top: 10px;
@@ -218,10 +209,9 @@
     return `
       <div class="overlay" id="yam-overlay">
         <div class="panel" role="dialog" aria-label="Настройки мода">
-          <h2>⚙ Настройки мода</h2>
-          <p class="subtitle">YaMusicMod — Discord RPC · Загрузка треков · Шрифты</p>
+          <h2>Настройки мода</h2>
+          <p class="subtitle">YaMusicMod</p>
 
-          <!-- Discord RPC -->
           <div class="section">
             <div class="section-title">Discord Rich Presence</div>
             <div class="row">
@@ -252,7 +242,6 @@
             </div>
           </div>
 
-          <!-- Загрузка треков -->
           <div class="section download-section">
             <div class="section-title">Загрузка треков</div>
             <div class="row" style="display:block">
@@ -274,7 +263,6 @@
             <div class="progress-log" id="dl-log"></div>
           </div>
 
-          <!-- Шрифты -->
           <div class="section">
             <div class="section-title">Шрифт интерфейса</div>
             <div class="row">
@@ -293,8 +281,6 @@
       </div>
     `;
   }
-
-  // ─── Кнопка настроек ─────────────────────────────────────────────────────
 
   const BUTTON_SELECTORS = [
     '.UserInfo__account',
@@ -357,7 +343,6 @@
     console.log('[YaMod] Кнопка настроек вставлена ✓');
   }
 
-  // ─── Панель настроек ──────────────────────────────────────────────────────
 
   let panelHost = null;
 
@@ -366,7 +351,6 @@
 
     const settings = await loadSettings();
 
-    // Shadow DOM — изолируемся от стилей ЯМ
     panelHost = document.createElement('div');
     panelHost.id = 'ya-mod-panel-host';
     const shadow = panelHost.attachShadow({ mode: 'open' });
@@ -381,7 +365,6 @@
 
     document.body.appendChild(panelHost);
 
-    // Анимация появления
     requestAnimationFrame(() => {
       shadow.getElementById('yam-overlay').classList.add('visible');
     });
@@ -407,7 +390,6 @@
 
     shadow.getElementById('yam-cancel').addEventListener('click', closePanel);
 
-    // Шрифт — предпросмотр в реальном времени
     shadow.getElementById('font-select').addEventListener('change', (e) => {
       if (window.__yamFonts) window.__yamFonts.apply(e.target.value);
     });
@@ -431,12 +413,10 @@
 
       await saveSettings(newSettings);
 
-      // Применяем шрифт
       if (window.__yamFonts) {
         window.__yamFonts.apply(newSettings.fonts.selected);
       }
 
-      // Обновляем RPC состояние
       if (window.yaModIPC) {
         window.yaModIPC.send('ya-mod:rpc-toggle', {
           enabled: newSettings.discordRpc.enabled,
@@ -447,7 +427,6 @@
       closePanel();
     });
 
-    // Загрузка трека
     shadow.getElementById('dl-track-btn').addEventListener('click', () => {
       const url = window.location.href;
       const outputPath = shadow.getElementById('dl-path').value.trim();
@@ -476,7 +455,6 @@
       }
     });
 
-    // Загрузка плейлиста
     shadow.getElementById('dl-playlist-btn').addEventListener('click', () => {
       const url = window.location.href;
       const outputPath = shadow.getElementById('dl-path').value.trim();
@@ -504,9 +482,7 @@
     });
   }
 
-  // ─── Инициализация ────────────────────────────────────────────────────────
 
-  // Кнопку пробуем вставить сразу и при мутациях DOM (SPA)
   function tryInject() {
     injectSettingsButton();
   }
@@ -515,7 +491,6 @@
   injectorObserver.observe(document.body, { childList: true, subtree: true });
   tryInject();
 
-  // Применяем сохранённый шрифт при загрузке
   loadSettings().then((settings) => {
     if (window.__yamFonts && settings.fonts.selected && settings.fonts.selected !== 'Системный') {
       window.__yamFonts.apply(settings.fonts.selected);
