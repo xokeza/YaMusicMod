@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+    <defs>
+        <linearGradient id="llGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="50%" stop-color="#6366f1" />
+            <stop offset="100%" stop-color="#a855f7" />
+        </linearGradient>
+        <linearGradient id="waveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="100%" stop-color="#818cf8" />
+        </linearGradient>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+
+    <!-- Icon / Monogram -->
+    <rect x="4" y="4" width="40" height="40" rx="12" fill="#121217" stroke="#272732" stroke-width="1.5" />
+    <!-- Equalizer bars forming L + wave + L -->
+    <rect x="12" y="14" width="4" height="20" rx="2" fill="url(#llGrad)" filter="url(#glow)" />
+    <rect x="18" y="28" width="6" height="6" rx="2" fill="url(#llGrad)" />
+    <rect x="26" y="10" width="4" height="28" rx="2" fill="url(#llGrad)" filter="url(#glow)" />
+    <rect x="32" y="24" width="6" height="14" rx="2" fill="url(#llGrad)" />
+
+    <!-- Wordmark -->
+    <text x="56" y="32" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" letter-spacing="-0.03em" fill="#ffffff">
+        <tspan fill="url(#llGrad)">LL</tspan><tspan fill="#ffffff">Music</tspan>
+    </text>
+</svg>

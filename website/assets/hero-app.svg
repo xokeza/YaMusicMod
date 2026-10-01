@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 540" fill="none">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#181824" />
+            <stop offset="100%" stop-color="#0e0e15" />
+        </linearGradient>
+        <linearGradient id="neonGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="50%" stop-color="#818cf8" />
+            <stop offset="100%" stop-color="#c084fc" />
+        </linearGradient>
+        <filter id="winShadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="24" stdDeviation="32" flood-color="#000000" flood-opacity="0.75" />
+        </filter>
+        <clipPath id="screenClip">
+            <rect x="0" y="0" width="820" height="480" rx="14" />
+        </clipPath>
+    </defs>
+
+    <!-- Main Window Container -->
+    <g transform="translate(40, 20)" filter="url(#winShadow)">
+        <rect width="820" height="480" rx="14" fill="#0f0f14" stroke="#252532" stroke-width="1.5" />
+
+        <g clip-path="url(#screenClip)">
+            <!-- Top Title Bar -->
+            <rect width="820" height="42" fill="#14141c" stroke="#222230" stroke-width="1" />
+            <!-- Window buttons -->
+            <circle cx="22" cy="21" r="5.5" fill="#ef4444" />
+            <circle cx="40" cy="21" r="5.5" fill="#eab308" />
+            <circle cx="58" cy="21" r="5.5" fill="#22c55e" />
+            <!-- Mod branding in titlebar -->
+            <rect x="90" y="11" width="110" height="20" rx="6" fill="#1e1e2d" />
+            <text x="145" y="25" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#38bdf8">LLMusic 1.33.12</text>
+
+            <!-- Window search bar -->
+            <rect x="290" y="9" width="240" height="24" rx="12" fill="#1e1e2a" stroke="#2b2b3d" stroke-width="1" />
+            <text x="315" y="25" font-family="system-ui, sans-serif" font-size="11" fill="#71717a">Трек, артист, подкаст...</text>
+
+            <!-- Main App Body -->
+            <!-- Left Sidebar -->
+            <rect x="0" y="42" width="190" height="438" fill="#111118" />
+            <!-- Navigation items -->
+            <rect x="14" y="60" width="162" height="34" rx="8" fill="#1e1e2d" />
+            <circle cx="32" cy="77" r="7" fill="#38bdf8" />
+            <text x="50" y="81" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#ffffff">Главное</text>
+
+            <rect x="14" y="102" width="162" height="34" rx="8" fill="transparent" />
+            <circle cx="32" cy="119" r="6" fill="#52525b" />
+            <text x="50" y="123" font-family="system-ui, sans-serif" font-weight="600" font-size="13" fill="#a1a1aa">Коллекция</text>
+
+            <rect x="14" y="144" width="162" height="34" rx="8" fill="transparent" />
+            <circle cx="32" cy="161" r="6" fill="#52525b" />
+            <text x="50" y="165" font-family="system-ui, sans-serif" font-weight="600" font-size="13" fill="#a1a1aa">Темы и Аддоны</text>
+
+            <!-- Mod badge in sidebar -->
+            <rect x="14" y="340" width="162" height="60" rx="10" fill="#191924" stroke="#2c2c3d" stroke-width="1" />
+            <text x="26" y="362" font-family="system-ui, sans-serif" font-weight="800" font-size="12" fill="#38bdf8">LLMusic Active</text>
+            <text x="26" y="380" font-family="system-ui, sans-serif" font-size="10" fill="#a1a1aa">Discord RPC • Unlocked</text>
+
+            <!-- Main Content Area -->
+            <!-- Hero banner in app -->
+            <rect x="210" y="58" width="590" height="150" rx="12" fill="url(#bgGrad)" stroke="#272738" stroke-width="1" />
+            <rect x="230" y="78" width="110" height="110" rx="10" fill="#2d2254" />
+            <!-- Album art placeholder with music icon -->
+            <circle cx="285" cy="133" r="30" fill="#4338ca" />
+            <polygon points="278,120 298,133 278,146" fill="#ffffff" />
+            <text x="360" y="105" font-family="system-ui, sans-serif" font-weight="800" font-size="22" fill="#ffffff">Моя Волна</text>
+            <text x="360" y="130" font-family="system-ui, sans-serif" font-weight="600" font-size="13" fill="#818cf8">Персональный поток на основе ваших предпочтений</text>
+            <rect x="360" y="148" width="100" height="32" rx="16" fill="url(#neonGlow)" />
+            <text x="410" y="169" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="13" fill="#0b0b12">Слушать</text>
+
+            <!-- Track List Showcase -->
+            <text x="210" y="235" font-family="system-ui, sans-serif" font-weight="800" font-size="16" fill="#ffffff">Популярные треки с авто-скачиванием</text>
+
+            <!-- Row 1 -->
+            <rect x="210" y="250" width="590" height="42" rx="8" fill="#161622" />
+            <circle cx="230" cy="271" r="12" fill="#312e81" />
+            <text x="254" y="276" font-family="system-ui, sans-serif" font-weight="600" font-size="13" fill="#ffffff">Cyberpunk Dreams</text>
+            <text x="420" y="276" font-family="system-ui, sans-serif" font-size="12" fill="#71717a">Synthwave Master</text>
+            <rect x="680" y="260" width="60" height="22" rx="6" fill="#047857" />
+            <text x="710" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff">320 kbps</text>
+            <text x="775" y="276" font-family="system-ui, sans-serif" font-size="12" fill="#a1a1aa">3:42</text>
+
+            <!-- Row 2 -->
+            <rect x="210" y="298" width="590" height="42" rx="8" fill="#13131c" />
+            <circle cx="230" cy="319" r="12" fill="#4c1d95" />
+            <text x="254" y="324" font-family="system-ui, sans-serif" font-weight="600" font-size="13" fill="#ffffff">Neon Horizons</text>
+            <text x="420" y="324" font-family="system-ui, sans-serif" font-size="12" fill="#71717a">Electric Echo</text>
+            <rect x="680" y="308" width="60" height="22" rx="6" fill="#047857" />
+            <text x="710" y="323" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#ffffff">320 kbps</text>
+            <text x="775" y="324" font-family="system-ui, sans-serif" font-size="12" fill="#a1a1aa">2:56</text>
+
+            <!-- Bottom Player Bar -->
+            <rect x="0" y="415" width="820" height="65" fill="#0d0d12" stroke="#1f1f2e" stroke-width="1" />
+            <rect x="18" y="425" width="45" height="45" rx="6" fill="#312e81" />
+            <text x="75" y="445" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#ffffff">Cyberpunk Dreams</text>
+            <text x="75" y="462" font-family="system-ui, sans-serif" font-size="11" fill="#71717a">Synthwave Master</text>
+
+            <!-- Controls center -->
+            <circle cx="410" cy="442" r="18" fill="url(#neonGlow)" />
+            <polygon points="406,434 418,442 406,450" fill="#0b0b12" />
+            <!-- Progress bar -->
+            <rect x="290" y="468" width="240" height="4" rx="2" fill="#27273a" />
+            <rect x="290" y="468" width="140" height="4" rx="2" fill="url(#neonGlow)" />
+        </g>
+    </g>
+
+    <!-- Floating Discord Rich Presence Card Overlay -->
+    <g transform="translate(560, 240)" filter="url(#winShadow)">
+        <rect width="300" height="150" rx="12" fill="#18191c" stroke="#5865f2" stroke-width="1.5" />
+        <rect x="14" y="14" width="20" height="20" rx="5" fill="#5865f2" />
+        <text x="42" y="29" font-family="system-ui, sans-serif" font-weight="800" font-size="12" fill="#ffffff">В ИГРЕ / СЛУШАЕТ</text>
+
+        <rect x="16" y="46" width="60" height="60" rx="10" fill="#2d2254" />
+        <circle cx="46" cy="76" r="16" fill="#38bdf8" />
+
+        <text x="86" y="60" font-family="system-ui, sans-serif" font-weight="800" font-size="13" fill="#ffffff">Яндекс Музыка</text>
+        <text x="86" y="78" font-family="system-ui, sans-serif" font-weight="600" font-size="12" fill="#e4e4e7">Cyberpunk Dreams</text>
+        <text x="86" y="94" font-family="system-ui, sans-serif" font-size="11" fill="#9ca3af">Synthwave Master</text>
+
+        <!-- Discord RPC Action Button -->
+        <rect x="86" y="106" width="190" height="26" rx="6" fill="#2b2d31" stroke="#3f4147" stroke-width="1" />
+        <text x="181" y="123" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#5865f2">Слушать на сайте LLMusic</text>
+    </g>
+</svg>
