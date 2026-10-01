@@ -2052,7 +2052,7 @@ window.findCssRuleByPartialName = function (pName) {
                 callWithPlayer((playerInst) => {
                     const entityId = createEntityId(trackId, options?.albumId);
                     const queue = playerInst?.state?.queueState?.entityList?.value || [];
-                    const currentId = playerInst?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id;
+                    const currentId = playerInst?.state?.queueState?.currentEntity?.value?.entity?.data?.meta?.id || playerInst?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.id;
 
                     if (currentId === entityId) {
                         playerInst.setProgress?.(0);
@@ -2062,7 +2062,7 @@ window.findCssRuleByPartialName = function (pName) {
                         return;
                     }
 
-                    const trackIndex = queue.findIndex((item) => item?.entity?.entityData?.meta?.id === entityId);
+                    const trackIndex = queue.findIndex((item) => (item?.entity?.data?.meta?.id || item?.entity?.entityData?.meta?.id) === entityId);
                     if (trackIndex !== -1) {
                         playerInst.setEntityByIndex?.(trackIndex);
                         return;
@@ -2147,10 +2147,10 @@ window.findCssRuleByPartialName = function (pName) {
             },
             getState: () => getPlayerInstance()?.state,
             isPlaying: () => getPlayerInstance()?.state?.playerState?.status?.value === 'playing',
-            getCurrentTrack: () => getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta,
+            getCurrentTrack: () => { const ent = getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity; return ent?.data?.meta || ent?.entityData?.meta || null; },
             getQueue: () => getPlayerInstance()?.state?.queueState?.entityList?.value,
             getProgress: () => getPlayerInstance()?.state?.playerState?.progress?.value,
-            getDuration: () => getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity?.entityData?.meta?.duration,
+            getDuration: () => { const ent = getPlayerInstance()?.state?.queueState?.currentEntity?.value?.entity; const meta = ent?.data?.meta || ent?.entityData?.meta; return meta?.duration || (meta?.durationMs ? meta.durationMs / 1000 : undefined); },
             getVolume: () => getPlayerInstance()?.state?.playerState?.volume?.value,
             getRepeatMode: () => getPlayerInstance()?.state?.queueState?.repeat?.value,
             isShuffle: () => getPlayerInstance()?.state?.queueState?.shuffle?.value,
