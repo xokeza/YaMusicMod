@@ -18,7 +18,7 @@ const zstdDecompressPromise = zlib.zstdDecompress ? promisify(zlib.zstdDecompres
 
 exports.getModUpdater = exports.ModUpdater = void 0;
 
-const UPDATE_CHECK_URL = `https://ru-node-1.pulsesync.dev/api/v1/mod/latest`;
+const UPDATE_CHECK_URL = `https://xokeza.su/llmusic/api/v1/mod/latest`;
 const APP_ASAR_PATH = electron.app.getAppPath();
 const APP_ASAR_TMP_DOWNLOAD_PATH = path.join(electron.app.getAppPath(), '../../', 'temp\\app.asar');
 const APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH = path.join(electron.app.getAppPath(), '../../', 'temp\\app.asar.zst');
@@ -193,7 +193,7 @@ class ModUpdater {
     }
 
     async openPatcher(filePath) {
-        const cmdScript = `pulsesync://patch/from_mod/${encodeURIComponent(filePath)}`;
+        const cmdScript = `llmusic://patch/from_mod/${encodeURIComponent(filePath)}`;
         this.logger.log('Opening external detached: ', cmdScript);
         await this.openExternalDetached(cmdScript);
     }

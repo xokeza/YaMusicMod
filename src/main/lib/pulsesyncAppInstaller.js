@@ -13,14 +13,14 @@ const { spawn } = require('child_process');
 const Logger_js_1 = require('../packages/logger/Logger.js');
 
 const DEFAULT_FEEDS = {
-    win32: 'https://s3.pulsesync.dev/builds/app/beta/latest.yml',
-    linux: 'https://s3.pulsesync.dev/builds/app/beta/latest-linux.yml',
-    darwin: 'https://pulsesync.dev/builds/app/beta/download.json',
+    win32: 'https://xokeza.su/llmusic/builds/app/beta/latest.yml',
+    linux: 'https://xokeza.su/llmusic/builds/app/beta/latest-linux.yml',
+    darwin: 'https://xokeza.su/llmusic/builds/app/beta/download.json',
 };
 
 const DEFAULT_NAMES = {
-    appNames: ['PulseSync', 'PulseSync App', 'pulsesync-app'],
-    exeNames: ['PulseSync.exe', 'PulseSync App.exe', 'pulsesync-app.exe'],
+    appNames: ['LLMusic', 'LLMusic App', 'llmusic-app', 'PulseSync', 'PulseSync App', 'pulsesync-app'],
+    exeNames: ['LLMusic.exe', 'LLMusic App.exe', 'llmusic-app.exe', 'PulseSync.exe', 'PulseSync App.exe', 'pulsesync-app.exe'],
     desktopNames: ['pulsesync.desktop', 'pulsesync-app.desktop'],
     macAppNames: ['PulseSync.app', 'PulseSync App.app'],
     linuxBinaryNames: ['pulsesync', 'pulsesync-app'],

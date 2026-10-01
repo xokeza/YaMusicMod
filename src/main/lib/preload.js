@@ -221,7 +221,7 @@ const ensureNonPremiumTitlebarBranding = () => {
     const titleBar = window.document.querySelector('[class*="TitleBar_root"]');
     if (!titleBar) return;
 
-    const brandingText = `PulseSync ${config_js_1.config.modification.version}`;
+    const brandingText = `LLMusic ${config_js_1.config.modification.version}`;
     const head = window.document.head || window.document.documentElement;
     if (head) {
         let styleElement = window.document.getElementById(PULSESYNC_TITLEBAR_STYLE_ID);

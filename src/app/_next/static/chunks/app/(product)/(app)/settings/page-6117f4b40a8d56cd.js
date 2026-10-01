@@ -1105,13 +1105,13 @@
                                     children: (0, o.jsx)(j.N, {
                                         className: w().link,
                                         target: '_blank',
-                                        href: 'https://github.com/PulseSync-LLC/PulseSync-mod',
+                                        href: 'https://github.com/xokeza/YaMusicMod',
                                         children: (0, o.jsx)(c.HL, {
                                             type: 'controls',
                                             variant: 'span',
                                             size: 'l',
                                             weight: 'medium',
-                                            children: 'Репозиторий PulseSync на GitHub',
+                                            children: 'Репозиторий LLMusic на GitHub',
                                         }),
                                     }),
                                 }),
@@ -1120,7 +1120,7 @@
                                     children: (0, o.jsx)(j.N, {
                                         className: w().link,
                                         target: '_blank',
-                                        href: 'https://pulsesync.dev/subscription',
+                                        href: 'https://xokeza.su/llmusic/',
                                         children: (0, o.jsx)(c.HL, {
                                             type: 'controls',
                                             variant: 'span',
@@ -1135,13 +1135,13 @@
                                     children: (0, o.jsx)(j.N, {
                                         className: w().link,
                                         target: '_blank',
-                                        href: 'https://pulsesync.dev',
+                                        href: 'https://xokeza.su/llmusic/',
                                         children: (0, o.jsx)(c.HL, {
                                             type: 'controls',
                                             variant: 'span',
                                             size: 'l',
                                             weight: 'medium',
-                                            children: 'Сайт проекта PulseSync',
+                                            children: 'Сайт проекта LLMusic',
                                         }),
                                     }),
                                 }),
@@ -1168,7 +1168,7 @@
                             style: { display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'center' },
                             className: w().versionText,
                             children: [
-                                (0, o.jsx)(c.HL, { type: 'controls', variant: 'div', size: 'xs', children: 'PulseSync ' + window.PULSE_VERSION }),
+                                (0, o.jsx)(c.HL, { type: 'controls', variant: 'div', size: 'xs', children: 'LLMusic ' + window.PULSE_VERSION }),
                                 (0, o.jsx)(c.HL, { type: 'controls', variant: 'div', size: 'xs', children: 'Host ' + window.HOST_VERSION }),
                             ],
                         }),
@@ -3667,7 +3667,7 @@
                                     className: eb().item,
                                     children: (0, pulseJsxRuntime.jsx)(em, {
                                         title: [
-                                            'Скрывать версию PulseSync в TitleBar',
+                                            'Скрывать версию LLMusic в TitleBar',
                                             (0, pulseJsxRuntime.jsx)(labeledBubble, {
                                                 label: 'Basic',
                                                 tooltip: {
@@ -3677,7 +3677,7 @@
                                                 disabled: !a,
                                             }),
                                         ],
-                                        description: 'Скрывает подпись PulseSync в верхней панели окна.',
+                                        description: 'Скрывает подпись LLMusic в верхней панели окна.',
                                         onChange: onHidePulseSyncVersionInTitleBarToggle,
                                         isChecked: hidePulseSyncVersionInTitleBar && a,
                                         disabled: !a,
@@ -4248,7 +4248,7 @@
                                 className: eb().item,
                                 children: (0, pulseJsxRuntime.jsx)(em, {
                                     title: [
-                                        'Скрыть брендинг PulseSync в статусе',
+                                        'Скрыть брендинг LLMusic в статусе',
                                         (0, pulseJsxRuntime.jsx)(labeledBubble, {
                                             label: 'Basic',
                                             tooltip: {
@@ -4357,7 +4357,7 @@
                             (0, pulseJsxRuntime.jsx)('li', {
                                 className: eb().item,
                                 children: (0, pulseJsxRuntime.jsx)(em, {
-                                    title: 'Отображать кнопку на сайт PulseSync',
+                                    title: 'Отображать кнопку на сайт LLMusic',
                                     description: 'Отображает кнопку установки мода',
                                     onChange: onDiscordShowGitHubButtonToggle,
                                     isChecked: window.nativeSettings.getAsync('modSettings.discordRPC.showGitHubButton'),

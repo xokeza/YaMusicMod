@@ -50,7 +50,7 @@ logger.log(process.argv);
 
 if (store_js_1.get('sendModAnonymizedMetrics') ?? true) {
     initUserCountMetric({
-        endpointUrl: 'https://ru-node-1.pulsesync.dev/api/v2/metrics',
+        endpointUrl: 'https://xokeza.su/llmusic/api/v2/metrics',
         apiKey: 'l4lRNGW8mFQDmBBIEd0ZJSeI9ARRcgSaf_p5kkpmCvw',
         appName: 'YandexMusic',
         modVersion: config_js_1.config.modification.version,

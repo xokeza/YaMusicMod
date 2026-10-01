@@ -31,7 +31,7 @@ class convertableLink {
 const settings = () => store_js_1.getModSettings()?.discordRPC;
 
 const clientId = settings()?.applicationIDForRPC ?? '1124055337234858005';
-const WEB_LINK = 'https://pulsesync.dev';
+const WEB_LINK = 'https://xokeza.su/llmusic/';
 const SET_ACTIVITY_TIMEOUT_MS = 3000;
 const STATUS_DISPLAY_TYPES = {
     0: 0, // Name
@@ -467,7 +467,7 @@ function buildActivityObject(playingState) {
         state: string2Discord(artist),
         stateUrl: shareArtistPath.toWeb(),
         largeImageKey: albumArt,
-        largeImageText: !hideBranding && `PulseSync Mod ${config_js_1.config.modification.version}`,
+        largeImageText: !hideBranding && `LLMusic Mod ${config_js_1.config.modification.version}`,
         largeImageUrl: WEB_LINK,
         startTimestamp,
         endTimestamp,

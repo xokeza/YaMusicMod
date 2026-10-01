@@ -573,7 +573,7 @@
                             s &&
                             (0, r.jsxs)(r.Fragment, {
                                 children: [
-                                    !w && (0, r.jsx)('span', { className: c().pulseText, children: 'PulseSync '.concat(window.PULSE_VERSION) }),
+                                    !w && (0, r.jsx)('span', { className: c().pulseText, children: 'LLMusic '.concat(window.PULSE_VERSION) }),
                                     (0, r.jsx)(h, {
                                         onClick: onMiniPlayerToggle,
                                         ariaLabel: 'miniplayer',

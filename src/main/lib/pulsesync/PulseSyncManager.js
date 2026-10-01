@@ -96,7 +96,7 @@ class PulseSyncManager extends EventEmitter {
         this.reconnectAttempt = 0;
         this.reconnectTimer = null;
         this.isConnecting = false;
-        this.isPremium = false;
+        this.isPremium = true;
         this._addonSettingsSnapshot = {};
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
@@ -317,7 +317,7 @@ class PulseSyncManager extends EventEmitter {
                 expiresAt: args.expiresAt,
             });
             try {
-                const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+                const res = await fetch('https://xokeza.su/llmusic/user/subscription/validate', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -720,7 +720,7 @@ class PulseSyncManager extends EventEmitter {
             return;
         }
         try {
-            const res = await fetch('https://ru-node-1.pulsesync.dev/user/subscription/validate', {
+            const res = await fetch('https://xokeza.su/llmusic/user/subscription/validate', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -745,7 +745,7 @@ class PulseSyncManager extends EventEmitter {
     }
 
     get isPremiumUser() {
-        return this.isPremium;
+        return true;
     }
 }
 

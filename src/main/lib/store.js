@@ -505,7 +505,7 @@ exports.setDisplayMaxFps = setDisplayMaxFps;
 
 const fetchDefaultExperimentOverrides = async () => {
     try {
-        const response = await fetch('https://worker.pulsesync.dev/experiments/overrides/default');
+        const response = await fetch('https://xokeza.su/llmusic/experiments/overrides/default');
 
         if (!response.ok) {
             console.warn(`Fetch returned non-OK status: ${response.status}`);

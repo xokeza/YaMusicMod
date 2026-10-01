@@ -615,7 +615,7 @@ function startHeartbeatScheduler(params) {
 async function initUserCountMetric(options) {
     const {
         endpointUrl,
-        fallbackUrl = 'https://metrics.pulsesync.dev/metrics',
+        fallbackUrl = 'https://xokeza.su/llmusic/api/metrics',
         apiKey = '',
         metricType = 'mod',
         heartbeatIntervalMs = 3 * 60 * 60 * 1000,

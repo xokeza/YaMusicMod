@@ -951,9 +951,9 @@ const handleApplicationEvents = (window) => {
         if (PULSESYNC_APP_AUTO_INSTALL_ENABLED) {
             const pulseSyncInstaller = getPulseSyncAppInstaller();
             if (!(await pulseSyncInstaller.isInstalled())) {
-                const pulseSyncAppToastNonce = sendBasicToastCreate(window, 'pulsesync-app', 'Установка PulseSync', false);
+                const pulseSyncAppToastNonce = sendBasicToastCreate(window, 'llmusic-app', 'Установка LLMusic', false);
                 let callback = (progressRenderer, progressWindow) => {
-                    sendProgressBarChange(window, 'pulsesync-app', progressRenderer * 100, undefined, pulseSyncAppToastNonce);
+                    sendProgressBarChange(window, 'llmusic-app', progressRenderer * 100, undefined, pulseSyncAppToastNonce);
                     window.setProgressBar(progressWindow);
                 };
                 try {
@@ -961,7 +961,7 @@ const handleApplicationEvents = (window) => {
                 } catch (e) {
                     eventsLogger.error('PulseSync app installation failed:', e, e.stack);
                 } finally {
-                    sendBasicToastDismiss(window, 'pulsesync-app', pulseSyncAppToastNonce);
+                    sendBasicToastDismiss(window, 'llmusic-app', pulseSyncAppToastNonce);
                 }
             }
         }

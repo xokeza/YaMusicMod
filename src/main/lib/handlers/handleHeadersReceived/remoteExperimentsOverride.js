@@ -2,7 +2,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.experimentOverridesHandler = void 0;
 const config_1 = require('../../../config');
-const EXPERIMENTS_URLS = ['https://worker.pulsesync.dev'];
+const EXPERIMENTS_URLS = ['https://xokeza.su', 'https://worker.pulsesync.dev'];
 function experimentOverridesHandler(responseHeaders, details) {
     const newResponseHeaders = structuredClone(responseHeaders);
     if (!EXPERIMENTS_URLS.some((url) => details.url.startsWith(url))) {
