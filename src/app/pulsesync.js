@@ -1,3 +1,4 @@
+import('./builtinPluginsData.js');
 window.findCssRuleByPartialName = function (pName) {
     const found = [];
     for (const sheet of document.styleSheets) {
@@ -2188,6 +2189,13 @@ window.findCssRuleByPartialName = function (pName) {
                         };
                     },
                 };
+            },
+            updateSettings: (addonId, nextSettings) => {
+                applyAddonSettingsUpdate(addonId, nextSettings);
+                window.desktopEvents?.send?.('PULSESYNC_ADDON_SETTINGS_UPDATE', {
+                    addon: addonId,
+                    settings: nextSettings,
+                });
             },
             setPlayerInstance: (playerInst) => {
                 installYandexStationPlayerProxy(playerInst);

@@ -587,6 +587,17 @@ class PulseSyncManager extends EventEmitter {
         return this.cloneAddonSettingsValue(this._addonSettingsSnapshot);
     }
 
+    updateAddonSettings(addon, settings) {
+        if (!addon || typeof addon !== 'string') return;
+        this._addonSettingsSnapshot = {
+            ...this._addonSettingsSnapshot,
+            [addon]: {
+                ...(this._addonSettingsSnapshot[addon] || {}),
+                ...this.cloneAddonSettingsValue(settings),
+            },
+        };
+    }
+
     async handleCss({ css, name }) {
         const key = `css-${sanitizeId(name)}`;
         const old = this.cssContent[key] || '';

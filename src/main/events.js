@@ -1375,6 +1375,27 @@ electron_1.ipcMain.handle('get-enabled-addons', () => {
     }
 });
 
+electron_1.ipcMain.on('PULSESYNC_ADDON_SETTINGS_UPDATE', (event, payload) => {
+    try {
+        if (!payload?.addon) return;
+        const addonKey = payload.addon;
+        const currentModSettings = store_js_1.getModSettings() || {};
+        const pluginSettings = currentModSettings.pluginSettings || {};
+        pluginSettings[addonKey] = {
+            ...(pluginSettings[addonKey] || {}),
+            ...(payload.settings || {}),
+        };
+        store_js_1.set('modSettings.pluginSettings', pluginSettings);
+
+        const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);
+        if (mgr) {
+            mgr.updateAddonSettings?.(addonKey, payload.settings);
+        }
+    } catch (err) {
+        eventsLogger.error('PULSESYNC_ADDON_SETTINGS_UPDATE failed:', err);
+    }
+});
+
 electron_1.ipcMain.handle(events_js_1.Events.PULSESYNC_SETTINGS_SNAPSHOT, () => {
     try {
         const mgr = pulseSyncManager_js_1 || (mainWindow ? (0, getPulseSyncManager)(mainWindow) : null);

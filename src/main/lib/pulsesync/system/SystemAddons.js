@@ -38,7 +38,6 @@ const BUILTIN_ADDON_SPECS = [
     { dir: 'BetterQueue', order: 30, id: 'betterqueue', defaultName: 'BetterQueue' },
     { dir: 'CustomBackground', order: 40, id: 'custombackground', defaultName: 'Custom Background' },
     { dir: 'CustomFonts', order: 50, id: 'customfonts', defaultName: 'Custom Fonts' },
-    { dir: 'ChromaSync', order: 60, id: 'chromasync', defaultName: 'ChromaSync Lite' },
 ];
 
 function extractDefaultSettings(dirPath) {
@@ -102,6 +101,23 @@ function getSystemDefaultSettings() {
             allSettings[k] = s;
         }
     }
+    try {
+        const { getModSettings } = require('../../store.js');
+        const userPluginSettings = getModSettings()?.pluginSettings;
+        if (userPluginSettings && typeof userPluginSettings === 'object') {
+            for (const [addonId, customSettings] of Object.entries(userPluginSettings)) {
+                if (!customSettings || typeof customSettings !== 'object') continue;
+                const keys = [sanitizeId(addonId), normalizeAddonId(addonId), addonId];
+                for (const k of keys) {
+                    if (allSettings[k]) {
+                        allSettings[k] = { ...allSettings[k], ...customSettings };
+                    } else {
+                        allSettings[k] = { ...customSettings };
+                    }
+                }
+            }
+        }
+    } catch {}
     return allSettings;
 }
 
