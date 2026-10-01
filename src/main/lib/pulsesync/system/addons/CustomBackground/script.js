@@ -139,11 +139,15 @@
                 video.autoplay = true;
                 video.loop = true;
                 video.muted = true;
+                video.defaultMuted = true;
+                video.volume = 0;
                 video.playsInline = true;
+                video.setAttribute('muted', '');
+                video.setAttribute('playsinline', '');
                 video.style.width = '100%';
                 video.style.height = '100%';
                 video.style.objectFit = 'cover';
-                video.style.borderRadius = '6px';
+                video.style.borderRadius = '0px';
                 container.appendChild(video);
                 video.play().catch(() => {});
             } else {
@@ -654,7 +658,7 @@
                     if (!globalFileCache) { const newUrl = URL.createObjectURL(file); globalFileCache = { url: newUrl, type: file.type }; cleanupOldBlobUrls(globalBlobUrls, newUrl); }
                     targetUrl = globalFileCache.url;
                     const type = globalFileCache.type;
-                    isVideo = type.startsWith('video/'); isGif = type === 'image/gif' || targetUrl.toLowerCase().endsWith('.gif');
+                    isVideo = (type && type.startsWith('video/')) || Boolean(file?.name && /\.(mp4|webm|m4v|mkv)$/i.test(file.name)); isGif = type === 'image/gif' || Boolean(file?.name && /\.gif$/i.test(file.name)) || targetUrl.toLowerCase().endsWith('.gif');
                 } else { if (globalFileCache) { cleanupOldBlobUrls(globalBlobUrls, null); globalFileCache = null; } }
             }
             if (targetUrl) { clearTimeout(resetTimers.global); resetTimers.global = null; }
@@ -682,7 +686,7 @@
                 if (file) {
                     if (!vibeFileCache) { const newUrl = URL.createObjectURL(file); vibeFileCache = { url: newUrl, type: file.type }; cleanupOldBlobUrls(vibeBlobUrls, newUrl); }
                     targetUrl = vibeFileCache.url; const type = vibeFileCache.type;
-                    isVideo = type.startsWith('video/'); isGif = type === 'image/gif' || targetUrl.toLowerCase().endsWith('.gif');
+                    isVideo = (type && type.startsWith('video/')) || Boolean(file?.name && /\.(mp4|webm|m4v|mkv)$/i.test(file.name)); isGif = type === 'image/gif' || Boolean(file?.name && /\.gif$/i.test(file.name)) || targetUrl.toLowerCase().endsWith('.gif');
                 } else { if (vibeFileCache) { cleanupOldBlobUrls(vibeBlobUrls, null); vibeFileCache = null; } }
             }
             if (targetUrl) { clearTimeout(resetTimers.vibe); resetTimers.vibe = null; }
@@ -953,6 +957,61 @@
         if (!document.hidden) setTimeout(() => { if (!isFrozen) initCoverTracking(); }, 2000);
         initPulseSyncSettings();
     }
+
+    
+    window.__customBackground = {
+        saveFile,
+        loadFile,
+        deleteFile,
+        applyGlobalStyle,
+        initVibeMedia,
+        setAdaptiveGlobalEnabled,
+        isAdaptiveGlobalEnabled,
+        setAdaptiveVibeEnabled,
+        isAdaptiveVibeEnabled,
+        setGlobalMedia: async (file) => {
+            setAdaptiveGlobalEnabled(false);
+            await saveFile('GlobalBackgroundDB', file);
+            await applyGlobalStyle(true);
+        },
+        setVibeMedia: async (file) => {
+            setAdaptiveVibeEnabled(false);
+            await saveFile('VibeVideoDB', file);
+            await initVibeMedia(true);
+        },
+        resetGlobalMedia: async () => {
+            setAdaptiveGlobalEnabled(false);
+            await deleteFile('GlobalBackgroundDB');
+            globalFileCache = null;
+            currentGlobal.url = null;
+            currentGlobal.isVideo = false;
+            currentGlobal.isGif = false;
+            await applyGlobalStyle(true);
+        },
+        resetVibeMedia: async () => {
+            setAdaptiveVibeEnabled(false);
+            await deleteFile('VibeVideoDB');
+            vibeFileCache = null;
+            currentVibe.url = null;
+            currentVibe.isVideo = false;
+            currentVibe.isGif = false;
+            await initVibeMedia(true);
+        },
+        getStatus: async () => {
+            const globalFile = await loadFile('GlobalBackgroundDB');
+            const vibeFile = await loadFile('VibeVideoDB');
+            return {
+                hasGlobalFile: Boolean(globalFile),
+                globalFileName: globalFile?.name || (globalFile ? (globalFile.type?.startsWith('video/') ? 'Видео (MP4/WebM)' : 'Изображение') : null),
+                globalFileType: globalFile?.type || null,
+                isAdaptiveGlobal: isAdaptiveGlobalEnabled(),
+                hasVibeFile: Boolean(vibeFile),
+                vibeFileName: vibeFile?.name || (vibeFile ? (vibeFile.type?.startsWith('video/') ? 'Видео (MP4/WebM)' : 'Изображение') : null),
+                vibeFileType: vibeFile?.type || null,
+                isAdaptiveVibe: isAdaptiveVibeEnabled(),
+            };
+        }
+    };
 
     init();
 

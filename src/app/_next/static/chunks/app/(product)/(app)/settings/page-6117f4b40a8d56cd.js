@@ -5033,6 +5033,8 @@
                     [pluginsState, setPluginsState] = (0, pulseReactRuntime.useState)({}),
                     [pluginSettingsValues, setPluginSettingsValues] = (0, pulseReactRuntime.useState)({}),
                     [noticeText, setNoticeText] = (0, pulseReactRuntime.useState)(''),
+                    [bgStatus, setBgStatus] = (0, pulseReactRuntime.useState)({}),
+                    [fontStatus, setFontStatus] = (0, pulseReactRuntime.useState)({}),
                     pluginsList = (typeof window !== 'undefined' && window.__BUILTIN_PLUGINS_DATA) || [];
 
                 let loadSettings = (0, pulseReactRuntime.useCallback)(() => {
@@ -5057,6 +5059,13 @@
                     }
                     setPluginsState(st);
                     setPluginSettingsValues(cfg);
+
+                    if (window.__customBackground?.getStatus) {
+                        window.__customBackground.getStatus().then(setBgStatus).catch(() => {});
+                    }
+                    if (window.__customFonts?.getStatus) {
+                        setFontStatus(window.__customFonts.getStatus() || {});
+                    }
                 }, [pluginsList]);
 
                 (0, pulseReactRuntime.useEffect)(() => {
@@ -5090,6 +5099,9 @@
                     }));
                     window.nativeSettings.set('modSettings.pluginSettings.' + pluginId + '.' + key, val);
                     window.pulsesyncApi?.updateSettings?.(pluginId, { [key]: val });
+                    if (pluginId === 'customfonts' && window.__customFonts?.updateSetting) {
+                        window.__customFonts.updateSetting(key, val);
+                    }
                 };
 
                 let onResetPluginSettings = (plugin) => {
@@ -5107,14 +5119,117 @@
                     window.pulsesyncApi?.updateSettings?.(plugin.id, defs);
                 };
 
+                // Custom Background Handlers
+                let handleUploadBgFile = (dbKey) => {
+                    let input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'video/mp4,video/webm,image/gif,image/png,image/jpeg,image/webp';
+                    input.style.display = 'none';
+                    document.body.appendChild(input);
+                    input.onchange = async (e) => {
+                        let file = e.target.files?.[0];
+                        if (file) {
+                            if (dbKey === 'global') {
+                                if (window.__customBackground?.setGlobalMedia) {
+                                    await window.__customBackground.setGlobalMedia(file);
+                                }
+                            } else {
+                                if (window.__customBackground?.setVibeMedia) {
+                                    await window.__customBackground.setVibeMedia(file);
+                                }
+                            }
+                            if (window.__customBackground?.getStatus) {
+                                let st = await window.__customBackground.getStatus();
+                                setBgStatus(st);
+                            }
+                        }
+                        input.remove();
+                    };
+                    input.click();
+                };
+
+                let handleResetBgFile = async (dbKey) => {
+                    if (dbKey === 'global') {
+                        if (window.__customBackground?.resetGlobalMedia) {
+                            await window.__customBackground.resetGlobalMedia();
+                        }
+                    } else {
+                        if (window.__customBackground?.resetVibeMedia) {
+                            await window.__customBackground.resetVibeMedia();
+                        }
+                    }
+                    if (window.__customBackground?.getStatus) {
+                        let st = await window.__customBackground.getStatus();
+                        setBgStatus(st);
+                    }
+                };
+
+                let handleToggleAdaptiveBg = async (dbKey) => {
+                    if (dbKey === 'global') {
+                        let next = !bgStatus.isAdaptiveGlobal;
+                        if (window.__customBackground?.setAdaptiveGlobal) {
+                            await window.__customBackground.setAdaptiveGlobal(next);
+                        }
+                    } else {
+                        let next = !bgStatus.isAdaptiveVibe;
+                        if (window.__customBackground?.setAdaptiveVibe) {
+                            await window.__customBackground.setAdaptiveVibe(next);
+                        }
+                    }
+                    if (window.__customBackground?.getStatus) {
+                        let st = await window.__customBackground.getStatus();
+                        setBgStatus(st);
+                    }
+                };
+
+                // Custom Fonts Handlers
+                let handleUploadFontFile = () => {
+                    let input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.ttf,.otf,.woff,.woff2';
+                    input.style.display = 'none';
+                    document.body.appendChild(input);
+                    input.onchange = async (e) => {
+                        let file = e.target.files?.[0];
+                        if (file) {
+                            if (window.__customFonts?.setCustomFontFile) {
+                                await window.__customFonts.setCustomFontFile(file);
+                            }
+                            if (window.__customFonts?.getStatus) {
+                                setFontStatus(window.__customFonts.getStatus());
+                            }
+                        }
+                        input.remove();
+                    };
+                    input.click();
+                };
+
+                let handleSelectSystemFont = async (name) => {
+                    if (window.__customFonts?.setSystemFont) {
+                        await window.__customFonts.setSystemFont(name);
+                    }
+                    if (window.__customFonts?.getStatus) {
+                        setFontStatus(window.__customFonts.getStatus());
+                    }
+                };
+
+                let handleResetFont = async () => {
+                    if (window.__customFonts?.resetFont) {
+                        await window.__customFonts.resetFont();
+                    }
+                    if (window.__customFonts?.getStatus) {
+                        setFontStatus(window.__customFonts.getStatus());
+                    }
+                };
+
                 let activePlugin = activePluginId ? pluginsList.find((p) => p.id === activePluginId) : null;
 
                 return (0, pulseJsxRuntime.jsx)(pulseModal, {
                     className: ev().list,
-                    style: { maxWidth: '38rem', width: '92vw', height: 'auto', maxHeight: '86vh', overflowY: 'auto' },
+                    style: { maxWidth: '38.5rem', width: '92vw' },
                     title: activePlugin ? ('Плагин: ' + activePlugin.name) : 'Плагины',
                     headerClassName: ev().modalHeader,
-                    contentClassName: ''.concat(ev().modalContent),
+                    contentClassName: ''.concat(ev().modalContent, ' Modal_content_no_right_padding'),
                     open: isOpen,
                     onClose: () => {
                         if (activePluginId) {
@@ -5128,7 +5243,19 @@
                     overlayColor: 'full',
                     labelClose: e({ id: 'interface-actions.close' }),
                     children: (0, pulseJsxRuntime.jsxs)('div', {
-                        style: { width: '100%', maxWidth: '36rem', display: 'flex', flexDirection: 'column', gap: '12px', padding: '4px 0 16px 0' },
+                        className: ''.concat(ev().list),
+                        style: {
+                            width: '100%',
+                            maxWidth: '36.5rem',
+                            maxHeight: '70vh',
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                            paddingRight: '8px',
+                            paddingBottom: '24px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                        },
                         children: [
                             noticeText && (0, pulseJsxRuntime.jsx)('div', {
                                 style: {
@@ -5150,7 +5277,7 @@
                                     }),
                                     pluginsList.map((p) => {
                                         let isEnabled = pluginsState[p.id] ?? true;
-                                        let hasSettings = p.sections && p.sections.length > 0;
+                                        let hasSettings = (p.sections && p.sections.length > 0) || p.hasMediaUpload || p.hasFontUpload;
                                         return (0, pulseJsxRuntime.jsxs)('div', {
                                             key: p.id,
                                             onClick: () => setActivePluginId(p.id),
@@ -5321,7 +5448,196 @@
                                             }),
                                         ],
                                     }),
-                                    (!activePlugin.sections || activePlugin.sections.length === 0) ? (0, pulseJsxRuntime.jsx)('div', {
+
+                                    // Special Section: CustomBackground File & Video Uploads
+                                    activePlugin.id === 'custombackground' && (0, pulseJsxRuntime.jsxs)('div', {
+                                        style: { display: 'flex', flexDirection: 'column', gap: '10px' },
+                                        children: [
+                                            (0, pulseJsxRuntime.jsx)('div', {
+                                                style: { fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--ym-text-color-secondary, rgba(255,255,255,0.5))', margin: '8px 0 2px 4px' },
+                                                children: 'Загрузка фонового медиафайла',
+                                            }),
+                                            // Global background card
+                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                style: { padding: '14px', borderRadius: '12px', backgroundColor: 'var(--ym-controls-color-secondary-default_background, rgba(255, 255, 255, 0.05))', border: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', flexDirection: 'column', gap: '10px' },
+                                                children: [
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontWeight: '600', fontSize: '14px', color: '#fff' }, children: 'Глобальный фон приложения' }),
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '2px' }, children: 'Поддерживаются MP4 видео (звук глушится), GIF, PNG, JPG, WebP' }),
+                                                                ],
+                                                            }),
+                                                            (0, pulseJsxRuntime.jsx)('span', {
+                                                                style: { fontSize: '11px', padding: '3px 8px', borderRadius: '6px', background: bgStatus.hasGlobalFile ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255, 255, 255, 0.08)', color: bgStatus.hasGlobalFile ? '#2ecc71' : 'rgba(255,255,255,0.6)' },
+                                                                children: bgStatus.hasGlobalFile ? (bgStatus.globalFileName || 'Файл активен') : (bgStatus.isAdaptiveGlobal ? 'Адаптивный фон' : 'Не установлен'),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsx)('button', {
+                                                                type: 'button',
+                                                                onClick: () => handleUploadBgFile('global'),
+                                                                style: { padding: '8px 14px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.12)', border: 'none', color: '#fff', fontSize: '12.5px', fontWeight: '600', cursor: 'pointer' },
+                                                                children: '📁 Выбрать файл (MP4, GIF, Картинка)',
+                                                            }),
+                                                            bgStatus.hasGlobalFile && (0, pulseJsxRuntime.jsx)('button', {
+                                                                type: 'button',
+                                                                onClick: () => handleResetBgFile('global'),
+                                                                style: { padding: '8px 14px', borderRadius: '8px', background: 'rgba(231, 76, 60, 0.2)', border: 'none', color: '#e74c3c', fontSize: '12.5px', fontWeight: '600', cursor: 'pointer' },
+                                                                children: '🗑 Сбросить фон',
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '13px', fontWeight: '500', color: '#fff' }, children: 'Адаптивный фон из обложки' }),
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '11.5px', color: 'rgba(255,255,255,0.5)' }, children: 'Автоматически ставить обложку текущего трека' }),
+                                                                ],
+                                                            }),
+                                                            (0, pulseJsxRuntime.jsx)(pulseToggle, {
+                                                                isChecked: Boolean(bgStatus.isAdaptiveGlobal),
+                                                                onChange: () => handleToggleAdaptiveBg('global'),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                ],
+                                            }),
+                                            // Vibe background card
+                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                style: { padding: '14px', borderRadius: '12px', backgroundColor: 'var(--ym-controls-color-secondary-default_background, rgba(255, 255, 255, 0.05))', border: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', flexDirection: 'column', gap: '10px' },
+                                                children: [
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontWeight: '600', fontSize: '14px', color: '#fff' }, children: 'Фон страницы «Моя волна»' }),
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '2px' }, children: 'Отдельный фон/видео для блока или страницы Моей волны' }),
+                                                                ],
+                                                            }),
+                                                            (0, pulseJsxRuntime.jsx)('span', {
+                                                                style: { fontSize: '11px', padding: '3px 8px', borderRadius: '6px', background: bgStatus.hasVibeFile ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255, 255, 255, 0.08)', color: bgStatus.hasVibeFile ? '#2ecc71' : 'rgba(255,255,255,0.6)' },
+                                                                children: bgStatus.hasVibeFile ? (bgStatus.vibeFileName || 'Файл активен') : (bgStatus.isAdaptiveVibe ? 'Адаптивный фон' : 'Не установлен'),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsx)('button', {
+                                                                type: 'button',
+                                                                onClick: () => handleUploadBgFile('vibe'),
+                                                                style: { padding: '8px 14px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.12)', border: 'none', color: '#fff', fontSize: '12.5px', fontWeight: '600', cursor: 'pointer' },
+                                                                children: '📁 Выбрать фон для Моей волны',
+                                                            }),
+                                                            bgStatus.hasVibeFile && (0, pulseJsxRuntime.jsx)('button', {
+                                                                type: 'button',
+                                                                onClick: () => handleResetBgFile('vibe'),
+                                                                style: { padding: '8px 14px', borderRadius: '8px', background: 'rgba(231, 76, 60, 0.2)', border: 'none', color: '#e74c3c', fontSize: '12.5px', fontWeight: '600', cursor: 'pointer' },
+                                                                children: '🗑 Сбросить фон волны',
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '13px', fontWeight: '500', color: '#fff' }, children: 'Адаптивный фон Моей волны' }),
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '11.5px', color: 'rgba(255,255,255,0.5)' }, children: 'Автоматически ставить обложку текущего трека в Мою волну' }),
+                                                                ],
+                                                            }),
+                                                            (0, pulseJsxRuntime.jsx)(pulseToggle, {
+                                                                isChecked: Boolean(bgStatus.isAdaptiveVibe),
+                                                                onChange: () => handleToggleAdaptiveBg('vibe'),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                ],
+                                            }),
+                                        ],
+                                    }),
+
+                                    // Special Section: CustomFonts File & System Font Selection
+                                    activePlugin.id === 'customfonts' && (0, pulseJsxRuntime.jsxs)('div', {
+                                        style: { display: 'flex', flexDirection: 'column', gap: '10px' },
+                                        children: [
+                                            (0, pulseJsxRuntime.jsx)('div', {
+                                                style: { fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--ym-text-color-secondary, rgba(255,255,255,0.5))', margin: '8px 0 2px 4px' },
+                                                children: 'Выбор шрифта',
+                                            }),
+                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                style: { padding: '14px', borderRadius: '12px', backgroundColor: 'var(--ym-controls-color-secondary-default_background, rgba(255, 255, 255, 0.05))', border: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', flexDirection: 'column', gap: '10px' },
+                                                children: [
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsxs)('div', {
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontWeight: '600', fontSize: '14px', color: '#fff' }, children: 'Пользовательский файл шрифта' }),
+                                                                    (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '2px' }, children: 'Поддерживаются файлы .ttf, .otf, .woff, .woff2' }),
+                                                                ],
+                                                            }),
+                                                            (0, pulseJsxRuntime.jsx)('span', {
+                                                                style: { fontSize: '11px', padding: '3px 8px', borderRadius: '6px', background: fontStatus.hasFont ? 'rgba(46, 204, 113, 0.2)' : 'rgba(255, 255, 255, 0.08)', color: fontStatus.hasFont ? '#2ecc71' : 'rgba(255,255,255,0.6)' },
+                                                                children: fontStatus.fontFileName ? ('Файл: ' + fontStatus.fontFileName) : (fontStatus.systemFontDisplayName ? ('Системный: ' + fontStatus.systemFontDisplayName) : 'Шрифт Яндекса'),
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsx)('button', {
+                                                                type: 'button',
+                                                                onClick: handleUploadFontFile,
+                                                                style: { padding: '8px 14px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.12)', border: 'none', color: '#fff', fontSize: '12.5px', fontWeight: '600', cursor: 'pointer' },
+                                                                children: '📁 Выбрать файл шрифта',
+                                                            }),
+                                                            fontStatus.hasFont && (0, pulseJsxRuntime.jsx)('button', {
+                                                                type: 'button',
+                                                                onClick: handleResetFont,
+                                                                style: { padding: '8px 14px', borderRadius: '8px', background: 'rgba(231, 76, 60, 0.2)', border: 'none', color: '#e74c3c', fontSize: '12.5px', fontWeight: '600', cursor: 'pointer' },
+                                                                children: '🗑 Сбросить шрифт',
+                                                            }),
+                                                        ],
+                                                    }),
+                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                        style: { display: 'flex', flexDirection: 'column', gap: '6px', paddingTop: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' },
+                                                        children: [
+                                                            (0, pulseJsxRuntime.jsx)('div', { style: { fontSize: '13px', fontWeight: '500', color: '#fff' }, children: 'Встроенные системные шрифты:' }),
+                                                            (0, pulseJsxRuntime.jsx)('select', {
+                                                                value: fontStatus.systemFontDisplayName || '',
+                                                                style: {
+                                                                    width: '100%',
+                                                                    padding: '8px 12px',
+                                                                    borderRadius: '8px',
+                                                                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                                                                    color: '#fff',
+                                                                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                                                                    cursor: 'pointer',
+                                                                },
+                                                                onChange: (ev) => handleSelectSystemFont(ev.target.value),
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('option', { value: '', style: { background: '#222', color: '#fff' }, children: 'Шрифт по умолчанию (Яндекс)' }),
+                                                                    ['Arial', 'Calibri', 'Futura', 'Garamond', 'Georgia', 'Helvetica', 'OpenSans', 'Roboto', 'Times New Roman', 'Verdana'].map((f) => (0, pulseJsxRuntime.jsx)('option', { key: f, value: f, style: { background: '#222', color: '#fff' }, children: f })),
+                                                                ],
+                                                            }),
+                                                        ],
+                                                    }),
+                                                ],
+                                            }),
+                                        ],
+                                    }),
+
+                                    (!activePlugin.sections || activePlugin.sections.length === 0) && !activePlugin.hasMediaUpload && !activePlugin.hasFontUpload ? (0, pulseJsxRuntime.jsx)('div', {
                                         style: {
                                             padding: '24px 16px',
                                             textAlign: 'center',
@@ -5334,7 +5650,7 @@
                                     }) : (0, pulseJsxRuntime.jsxs)('div', {
                                         style: { display: 'flex', flexDirection: 'column', gap: '8px' },
                                         children: [
-                                            activePlugin.sections.map((sec, secIdx) => (0, pulseJsxRuntime.jsxs)('div', {
+                                            (activePlugin.sections || []).map((sec, secIdx) => (0, pulseJsxRuntime.jsxs)('div', {
                                                 key: secIdx,
                                                 style: { display: 'flex', flexDirection: 'column', gap: '8px' },
                                                 children: [
@@ -5495,6 +5811,100 @@
                                                             });
                                                         }
 
+                                                        if (it.type === 'color') {
+                                                            return (0, pulseJsxRuntime.jsxs)('div', {
+                                                                key: it.id,
+                                                                style: {
+                                                                    padding: '12px 14px',
+                                                                    borderRadius: '12px',
+                                                                    backgroundColor: 'var(--ym-controls-color-secondary-default_background, rgba(255, 255, 255, 0.05))',
+                                                                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                    alignItems: 'center',
+                                                                    gap: '12px',
+                                                                },
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                                        style: { display: 'flex', flexDirection: 'column', flex: 1 },
+                                                                        children: [
+                                                                            (0, pulseJsxRuntime.jsx)('div', {
+                                                                                style: { fontWeight: '600', fontSize: '14px', color: 'var(--ym-text-color-primary, #fff)' },
+                                                                                children: it.name,
+                                                                            }),
+                                                                            it.description && (0, pulseJsxRuntime.jsx)('div', {
+                                                                                style: { fontSize: '12px', color: 'var(--ym-text-color-secondary, rgba(255,255,255,0.6))', marginTop: '2px' },
+                                                                                children: it.description,
+                                                                            }),
+                                                                        ],
+                                                                    }),
+                                                                    (0, pulseJsxRuntime.jsxs)('div', {
+                                                                        style: { display: 'flex', alignItems: 'center', gap: '8px' },
+                                                                        children: [
+                                                                            (0, pulseJsxRuntime.jsx)('input', {
+                                                                                type: 'color',
+                                                                                value: curVal || '#ffffff',
+                                                                                style: {
+                                                                                    width: '36px',
+                                                                                    height: '36px',
+                                                                                    padding: '0',
+                                                                                    border: 'none',
+                                                                                    borderRadius: '8px',
+                                                                                    cursor: 'pointer',
+                                                                                    backgroundColor: 'transparent',
+                                                                                },
+                                                                                onChange: (ev) => onUpdateSetting(activePlugin.id, it.id, ev.target.value),
+                                                                            }),
+                                                                            (0, pulseJsxRuntime.jsx)('span', {
+                                                                                style: { fontSize: '12px', color: 'rgba(255,255,255,0.6)', minWidth: '55px' },
+                                                                                children: curVal || '#ffffff',
+                                                                            }),
+                                                                        ],
+                                                                    }),
+                                                                ],
+                                                            });
+                                                        }
+
+                                                        if (it.type === 'text') {
+                                                            return (0, pulseJsxRuntime.jsxs)('div', {
+                                                                key: it.id,
+                                                                style: {
+                                                                    padding: '12px 14px',
+                                                                    borderRadius: '12px',
+                                                                    backgroundColor: 'var(--ym-controls-color-secondary-default_background, rgba(255, 255, 255, 0.05))',
+                                                                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                                                                    display: 'flex',
+                                                                    flexDirection: 'column',
+                                                                    gap: '8px',
+                                                                },
+                                                                children: [
+                                                                    (0, pulseJsxRuntime.jsx)('div', {
+                                                                        style: { fontWeight: '600', fontSize: '14px', color: 'var(--ym-text-color-primary, #fff)' },
+                                                                        children: it.name,
+                                                                    }),
+                                                                    it.description && (0, pulseJsxRuntime.jsx)('div', {
+                                                                        style: { fontSize: '12px', color: 'var(--ym-text-color-secondary, rgba(255,255,255,0.6))', marginTop: '2px' },
+                                                                        children: it.description,
+                                                                    }),
+                                                                    (0, pulseJsxRuntime.jsx)('input', {
+                                                                        type: 'text',
+                                                                        value: curVal || '',
+                                                                        style: {
+                                                                            width: '100%',
+                                                                            padding: '8px 12px',
+                                                                            borderRadius: '8px',
+                                                                            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                                                                            color: '#fff',
+                                                                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                                                                            outline: 'none',
+                                                                            fontSize: '13px',
+                                                                        },
+                                                                        onChange: (ev) => onUpdateSetting(activePlugin.id, it.id, ev.target.value),
+                                                                    }),
+                                                                ],
+                                                            });
+                                                        }
+
                                                         return null;
                                                     }),
                                                 ],
@@ -5514,7 +5924,7 @@
                                                     textAlign: 'center',
                                                     fontWeight: '600',
                                                 },
-                                                children: 'Сбросить настройки по умолчанию',
+                                                children: 'Сбросить настройки параметров по умолчанию',
                                             }),
                                         ],
                                     }),
@@ -5524,7 +5934,6 @@
                     }),
                 });
             });
-
             let eS = (0, pulseMobxRuntime.PA)(() => {
                 let e = (0, pulseSettingsRuntime.HFS)(),
                     t = (0, pulseSettingsRuntime.NFA)().get(pulseSettingsRuntime.ooW),

@@ -791,6 +791,37 @@
   }
 
   // ========== ИНИЦИАЛИЗАЦИЯ ==========
+  
+  window.__customFonts = {
+    setCustomFontFile: async (file) => {
+      const buffer = await file.arrayBuffer();
+      settings.fontData = buffer;
+      settings.fontFileName = file.name;
+      settings.systemFontDisplayName = null;
+      await saveSettingsToDB();
+      applyStyles();
+      updateUI();
+    },
+    setSystemFont: async (displayName) => {
+      if (!displayName || displayName === 'default') {
+        await resetFont();
+        return;
+      }
+      await applySystemFont(displayName);
+    },
+    resetFont: async () => {
+      await resetFont();
+    },
+    getStatus: () => ({
+      fontFileName: settings.fontFileName || null,
+      systemFontDisplayName: settings.systemFontDisplayName || null,
+      hasFont: Boolean(settings.fontData || settings.systemFontDisplayName),
+      settings: { ...settings },
+    }),
+    SYSTEM_FONTS_DISPLAY: Object.keys(SYSTEM_FONTS_MAP),
+    SYSTEM_FONTS_MAP,
+  };
+
   async function init() {
     log('Инициализация');
     if (window.WolfyLibrary && window.WolfyLibrary.AssetsManager) {
