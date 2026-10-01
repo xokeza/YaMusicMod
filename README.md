@@ -1,8 +1,6 @@
-# LLMusic-mod
-
 <div align="center">
 	
-	<img src="https://i.pinimg.com/originals/5c/84/56/5c8456fe235b39acf9b6cf970261d29b.gif" alt="Grid Studio Preview" width="720">
+<img src="https://i.pinimg.com/originals/5c/84/56/5c8456fe235b39acf9b6cf970261d29b.gif" alt="Grid Studio Preview" width="720">
 	
 <br><br>
 # LLMusic-mod
