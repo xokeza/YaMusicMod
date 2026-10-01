@@ -39,23 +39,50 @@ async function createRuntime() {
         PATCH_NOTES_PATH: path.join(REPO_ROOT, 'PATCHNOTES.md'),
     };
 
+    let linuxAppPath = null;
+    if (process.platform === 'linux') {
+        const candidates = [
+            '/opt/Яндекс Музыка',
+            '/opt/yandex-music',
+            '/opt/YandexMusic',
+            '/usr/lib/yandex-music',
+            '/usr/share/yandex-music',
+        ];
+        for (const c of candidates) {
+            if (fs.existsSync(c)) {
+                linuxAppPath = c;
+                break;
+            }
+        }
+    }
+
+    constants.LINUX_APP_PATH = linuxAppPath;
     constants.WINDOWS_EXE_PATH = path.join(constants.WINDOWS_APP_PATH ?? '', 'Яндекс Музыка.exe');
-    constants.DIRECT_DIST_PATH =
-        process.platform === 'darwin' ? path.join(constants.MAC_APP_PATH, '/Contents/Resources/app.asar') : path.join(constants.WINDOWS_APP_PATH, 'resources/app.asar');
+
+    if (process.platform === 'darwin') {
+        constants.DIRECT_DIST_PATH = path.join(constants.MAC_APP_PATH, '/Contents/Resources/app.asar');
+    } else if (process.platform === 'linux') {
+        constants.DIRECT_DIST_PATH = linuxAppPath ? path.join(linuxAppPath, 'resources/app.asar') : '/opt/yandex-music/resources/app.asar';
+    } else {
+        constants.DIRECT_DIST_PATH = path.join(constants.WINDOWS_APP_PATH, 'resources/app.asar');
+    }
+
     constants.INFO_PLIST_PATH = path.join(constants.MAC_APP_PATH, '/Contents/Info.plist');
     constants.EXTRACTED_ENTITLEMENTS_PATH = path.join(constants.TEMP_DIR, 'extracted_entitlements.xml');
 
     if (process.platform === 'darwin') {
         if (!fs.existsSync(constants.DIRECT_DIST_PATH)) {
-            runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nПереопределите MAC_APP_PATH в toolset_v3.js`);
+            runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nПереопределите MAC_APP_PATH`);
         }
         if (!fs.existsSync(constants.INFO_PLIST_PATH)) {
-            runtimeMessages.push(`Не удалось найти Info.plist: ${constants.INFO_PLIST_PATH}\nПереопределите MAC_APP_PATH в toolset_v3.js`);
+            runtimeMessages.push(`Не удалось найти Info.plist: ${constants.INFO_PLIST_PATH}\nПереопределите MAC_APP_PATH`);
         }
-    }
-
-    if (!fs.existsSync(constants.DIRECT_DIST_PATH)) {
-        runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nПереопределите WINDOWS_APP_PATH в toolset_v3.js`);
+    } else if (!fs.existsSync(constants.DIRECT_DIST_PATH)) {
+        if (process.platform === 'linux') {
+            runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nУкажите путь вручную через --dest=<path>`);
+        } else {
+            runtimeMessages.push(`Не удалось найти директорию с Яндекс Музыкой: ${constants.DIRECT_DIST_PATH}\nПереопределите WINDOWS_APP_PATH`);
+        }
     }
 
     if (!fs.existsSync(constants.TEMP_DIR)) {

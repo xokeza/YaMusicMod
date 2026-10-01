@@ -238,12 +238,21 @@ function createBuildUtils(runtime, { packageUtils, extractUtils, integrityUtils,
         console.log('Сборка миниплеера...');
         console.time('Миниплеер собран');
 
-        execSync('yarn', {
+        const hasYarn = (() => {
+            try {
+                execSync('yarn --version', { stdio: 'ignore' });
+                return true;
+            } catch {
+                return false;
+            }
+        })();
+
+        execSync(hasYarn ? 'yarn' : 'npm install', {
             cwd: info.miniPlayerDir,
             stdio: 'pipe',
         });
 
-        execSync('yarn run build', {
+        execSync(hasYarn ? 'yarn run build' : 'npm run build', {
             cwd: info.miniPlayerDir,
             stdio: 'pipe',
         });
