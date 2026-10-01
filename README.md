@@ -1,12 +1,14 @@
 # LLMusic-mod
 
-[![OS - Windows](https://img.shields.io/badge/OS-Windows-blue)](https://xokeza.su/llmusic/ "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Mac-blue)](https://xokeza.su/llmusic/ "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Linux-blue)](https://xokeza.su/llmusic/ "Download")
+<div align="center">
+	
+	<img src="https://i.pinimg.com/originals/5c/84/56/5c8456fe235b39acf9b6cf970261d29b.gif" alt="Grid Studio Preview" width="720">
+	
+<br><br>
+# LLMusic-mod
+</div>
 
-<p align="left">
-	<a href="https://discord.gg/7kvrMavsX6">
-      <img width="113" alt="Сервер" src="https://github.com/user-attachments/assets/b7c8a272-b48c-411f-aca3-6512086a9a18">
-   </a>
-</p>
+[![OS - Windows](https://img.shields.io/badge/OS-Windows-blue)](https://xokeza.su/llmusic/ "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Mac-blue)](https://xokeza.su/llmusic/ "Download") [![OS - MacOS](https://img.shields.io/badge/OS-Linux-blue)](https://xokeza.su/llmusic/ "Download")
 
 ### Это модификация для [настольного приложения Яндекс Музыка](https://music.yandex.com/download/), главная задача которой — добавить недостающие ванильному клиенту функции.
 
