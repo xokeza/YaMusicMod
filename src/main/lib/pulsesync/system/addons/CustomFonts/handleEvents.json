@@ -1,0 +1,109 @@
+{
+  "sections": [
+    {
+      "title": "Типографика",
+      "items": [
+        {
+          "id": "fontWeight",
+          "name": "Жирность",
+          "description": "Толщина шрифта (300 – 800)",
+          "type": "slider",
+          "min": 300,
+          "max": 800,
+          "step": 50,
+          "value": 400,
+          "defaultParameter": 400
+        },
+        {
+          "id": "letterSpacing",
+          "name": "Межбуквенный",
+          "description": "Расстояние между символами (-1px – 3px)",
+          "type": "slider",
+          "min": -1,
+          "max": 3,
+          "step": 0.5,
+          "value": 0,
+          "defaultParameter": 0
+        },
+        {
+          "id": "italic",
+          "name": "Курсив",
+          "description": "Наклонный шрифт",
+          "type": "button",
+          "bool": false,
+          "defaultParameter": false
+        },
+        {
+          "id": "underline",
+          "name": "Подчёркивание",
+          "description": "Линия под текстом",
+          "type": "button",
+          "bool": false,
+          "defaultParameter": false
+        },
+        {
+          "id": "lineThrough",
+          "name": "Зачёркивание",
+          "description": "Линия по центру текста",
+          "type": "button",
+          "bool": false,
+          "defaultParameter": false
+        }
+      ]
+    },
+    {
+      "title": "Тень текста",
+      "items": [
+        {
+          "id": "textShadowEnabled",
+          "name": "Тень",
+          "description": "Показывать тень у текста",
+          "type": "button",
+          "bool": false,
+          "defaultParameter": false
+        },
+        {
+          "id": "textShadowX",
+          "name": "Смещение X (px)",
+          "description": "Горизонтальное смещение тени",
+          "type": "slider",
+          "min": -10,
+          "max": 10,
+          "step": 1,
+          "value": 0,
+          "defaultParameter": 0
+        },
+        {
+          "id": "textShadowY",
+          "name": "Смещение Y (px)",
+          "description": "Вертикальное смещение тени",
+          "type": "slider",
+          "min": -10,
+          "max": 10,
+          "step": 1,
+          "value": 0,
+          "defaultParameter": 0
+        },
+        {
+          "id": "textShadowBlur",
+          "name": "Размытие (px)",
+          "description": "Степень размытия тени",
+          "type": "slider",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "value": 0,
+          "defaultParameter": 0
+        },
+        {
+          "id": "textShadowColor",
+          "name": "Цвет тени",
+          "description": "Выберите цвет тени",
+          "type": "color",
+          "value": "#000000",
+          "defaultParameter": "#000000"
+        }
+      ]
+    }
+  ]
+}

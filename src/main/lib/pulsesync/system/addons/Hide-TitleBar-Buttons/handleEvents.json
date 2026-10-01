@@ -1,0 +1,50 @@
+{
+  "sections": [
+    {
+      "title": "Верхняя панель управления (TitleBar)",
+      "items": [
+        {
+          "id": "enabled",
+          "name": "Автоскрытие кнопок окна",
+          "description": "Включить или выключить скрытие верхних кнопок управления",
+          "type": "button",
+          "bool": true,
+          "defaultParameter": true
+        },
+        {
+          "id": "opacityLevel",
+          "name": "Прозрачность в покое",
+          "description": "Уровень прозрачности кнопок окна, когда на них не наведен курсор",
+          "type": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "defaultParameter": 0
+        }
+      ]
+    },
+    {
+      "title": "Кнопка сворачивания полноэкранного режима",
+      "items": [
+        {
+          "id": "closeButtonEnabled",
+          "name": "Автоскрытие кнопки сворачивания",
+          "description": "Включить или выключить скрытие стрелочки закрытия полноэкранного плеера",
+          "type": "button",
+          "bool": true,
+          "defaultParameter": true
+        },
+        {
+          "id": "closeButtonOpacity",
+          "name": "Прозрачность в покое",
+          "description": "Уровень прозрачности стрелочки, когда на неё не наведен курсор",
+          "type": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "defaultParameter": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Фон: темный градиент -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14141d" />
+      <stop offset="100%" stop-color="#09090c" />
+    </linearGradient>
+
+    <!-- Неоновый градиент фиолетовых оттенков -->
+    <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7b2cbf" />
+      <stop offset="50%" stop-color="#9d4edd" />
+      <stop offset="100%" stop-color="#c77dff" />
+    </linearGradient>
+
+    <!-- Мягкое свечение -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Скруглённый фон логотипа -->
+  <rect width="512" height="512" rx="112" fill="url(#bg-grad)" stroke="#2a2a3a" stroke-width="4" />
+
+  <!-- Декоративное фоновое свечение -->
+  <circle cx="256" cy="256" r="160" fill="#7b2cbf" opacity="0.15" filter="blur(50px)" />
+
+  <!-- Макет карточки/окна -->
+  <g transform="translate(66, 86)">
+    <!-- Основная рамка окна -->
+    <rect width="380" height="340" rx="24" fill="#181824" stroke="#333346" stroke-width="3" />
+    
+    <!-- Шапка окна (TitleBar) -->
+    <path d="M 0,24 A 24,24 0 0,1 24,0 L 356,0 A 24,24 0 0,1 380,24 L 380,70 L 0,70 Z" fill="#202030" />
+    <line x1="0" y1="70" x2="380" y2="70" stroke="#333346" stroke-width="2" />
+
+    <!-- Левая иконка приложения в шапке -->
+    <circle cx="40" cy="35" r="10" fill="url(#accent-grad)" />
+
+    <!-- Кнопки управления (Полупрозрачные / Скрытые) -->
+    <g opacity="0.3">
+      <!-- Свернуть -->
+      <line x1="280" y1="35" x2="296" y2="35" stroke="#a0a0b0" stroke-width="3" stroke-linecap="round" />
+      <!-- Развернуть -->
+      <rect x="312" y="27" width="16" height="16" fill="none" stroke="#a0a0b0" stroke-width="3" rx="3" />
+      <!-- Закрыть -->
+      <path d="M 348,27 L 362,41 M 362,27 L 348,41" stroke="#a0a0b0" stroke-width="3" stroke-linecap="round" />
+    </g>
+
+    <!-- Акцентная кнопка со стрелкой вниз (Fullscreen Close) -->
+    <g transform="translate(140, 160)">
+      <circle cx="50" cy="50" r="42" fill="#222234" stroke="url(#accent-grad)" stroke-width="3" filter="url(#glow)" />
+      <path d="M 36,44 L 50,58 L 64,44" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+
+    <!-- Курсор мыши, наведённый на окно -->
+    <g transform="translate(240, 220)">
+      <path d="M0,0 L0,28 L7,22 L13,33 L18,30 L12,19 L21,19 Z" fill="#ffffff" filter="url(#glow)" />
+    </g>
+  </g>
+</svg>

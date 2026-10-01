@@ -1,0 +1,28 @@
+{
+  "name": "Custom Background",
+  "image": "logo.png",
+  "banner": "banner.png",
+  "libraryLogo": "logo.png",
+  "author": "dieugh",
+  "description": "Скрипт, который позволяет менять глобальный фон приложения и фон блока «Моя волна» на любое изображение или видео.",
+  "version": "1.0.9",
+  "css": "style.css",
+  "script": "script.js",
+  "type": "script",
+  "tags": [
+    "script",
+    "background",
+    "custom"
+  ],
+  "dependencies": [],
+  "conflictsWith": [],
+  "allowedUrls": [],
+  "supportedVersions": [
+    "^5.97.3"
+  ],
+  "id": "09ad7be0-ca29-48a4-b0a3-14e7990d05c9",
+  "fromPext": true,
+  "installSource": "store",
+  "storeAddonId": "09ad7be0-ca29-48a4-b0a3-14e7990d05c9",
+  "packageHash": "a4bb86c2577d8c1c868af21457d7309c8b120cdecbf355ba0ba6c0d91e88f047"
+}

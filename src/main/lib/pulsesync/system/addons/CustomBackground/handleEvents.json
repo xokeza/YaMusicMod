@@ -1,0 +1,137 @@
+{
+    "sections": [
+        {
+            "title": "Новая страница «Моя волна»",
+            "items": [
+                {
+                    "id": "newWave",
+                    "name": "Новая волна",
+                    "description": "Включите, если у вас новый дизайн страницы «Моя волна»",
+                    "type": "button",
+                    "bool": true,
+                    "defaultParameter": true
+                }
+            ]
+        },
+        {
+            "title": "Глобальный фон",
+            "items": [
+                {
+                    "id": "globalBlur",
+                    "name": "Размытие",
+                    "description": "Размытие фона приложения (0–20 px)",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 20,
+                    "step": 1,
+                    "value": 0,
+                    "defaultParameter": 0
+                },
+                {
+                    "id": "globalBrightness",
+                    "name": "Яркость",
+                    "description": "Яркость фона приложения (0.1–1.0)",
+                    "type": "slider",
+                    "min": 0.1,
+                    "max": 1.0,
+                    "step": 0.05,
+                    "value": 0.4,
+                    "defaultParameter": 0.4
+                },
+                {
+                    "id": "globalPixelate",
+                    "name": "Пикселизация",
+                    "description": "Эффект мозаики (0–20)",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 20,
+                    "step": 1,
+                    "value": 0,
+                    "defaultParameter": 0
+                },
+                {
+                    "id": "globalOpacity",
+                    "name": "Непрозрачность",
+                    "description": "Уровень прозрачности (0 – полностью прозрачный, 100 – непрозрачный)",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "value": 100,
+                    "defaultParameter": 100
+                },
+                {
+                    "id": "vignetteIntensity",
+                    "name": "Виньетка",
+                    "description": "Затемнение по краям экрана. 0 — выключено, 100 — максимальное.",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "value": 0,
+                    "defaultParameter": 0
+                }
+            ]
+        },
+        {
+            "title": "Фон Моей волны",
+            "items": [
+                {
+                    "id": "vibeBlur",
+                    "name": "Размытие",
+                    "description": "Размытие фона блока «Моя волна»",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 20,
+                    "step": 1,
+                    "value": 0,
+                    "defaultParameter": 0
+                },
+                {
+                    "id": "vibeBrightness",
+                    "name": "Яркость",
+                    "description": "Яркость фона блока «Моя волна»",
+                    "type": "slider",
+                    "min": 0.1,
+                    "max": 1.0,
+                    "step": 0.05,
+                    "value": 0.4,
+                    "defaultParameter": 0.4
+                },
+                {
+                    "id": "vibePixelate",
+                    "name": "Пикселизация",
+                    "description": "Эффект мозаики (0–20)",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 20,
+                    "step": 1,
+                    "value": 0,
+                    "defaultParameter": 0
+                },
+                {
+                    "id": "vibeOpacity",
+                    "name": "Непрозрачность",
+                    "description": "Уровень прозрачности (0 – полностью прозрачный, 100 – непрозрачный)",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "value": 100,
+                    "defaultParameter": 100
+                },
+                {
+                    "id": "vibeVignetteIntensity",
+                    "name": "Виньетка",
+                    "description": "Затемнение по краям блока «Моя волна». 0 — выключено, 100 — максимальное.",
+                    "type": "slider",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "value": 0,
+                    "defaultParameter": 0
+                }
+            ]
+        }
+    ]
+}

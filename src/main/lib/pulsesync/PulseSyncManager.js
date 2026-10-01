@@ -9,7 +9,7 @@ const { applyCss, removeCss, applyScript, wrapThemeScript } = require('./utils/P
 const { Events } = require('../../types/events');
 const { addAllowedUrls } = require('../handlers/handleHeadersReceived/corsHandler.js');
 
-const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem } = require('./system/SystemAddons');
+const { mergeWithSystem, isSystemId, sanitizeId: sanitizeIdFromSystem, getSystemDefaultSettings } = require('./system/SystemAddons');
 
 function sanitizeId(name) {
     return sanitizeIdFromSystem(name);
@@ -97,7 +97,7 @@ class PulseSyncManager extends EventEmitter {
         this.reconnectTimer = null;
         this.isConnecting = false;
         this.isPremium = true;
-        this._addonSettingsSnapshot = {};
+        this._addonSettingsSnapshot = typeof getSystemDefaultSettings === "function" ? getSystemDefaultSettings() : {};
 
         this.updatePlayerState = this.updatePlayerState.bind(this);
         this.updateDownloadInfo = this.updateDownloadInfo.bind(this);
@@ -395,7 +395,11 @@ class PulseSyncManager extends EventEmitter {
 
         this.socket.on('ADDON_SETTINGS_SNAPSHOT', (payload) => {
             const settings = payload?.settings && typeof payload.settings === 'object' && !Array.isArray(payload.settings) ? payload.settings : {};
-            this._addonSettingsSnapshot = this.cloneAddonSettingsValue(settings);
+            const defaults = typeof getSystemDefaultSettings === 'function' ? getSystemDefaultSettings() : {};
+            this._addonSettingsSnapshot = {
+                ...defaults,
+                ...this.cloneAddonSettingsValue(settings),
+            };
             this.window.webContents.send(Events.PULSESYNC_SETTINGS, {
                 type: 'snapshot',
                 settings,

@@ -1,0 +1,23 @@
+{
+  "name": "BetterQueue",
+  "image": "image.png",
+  "banner": "",
+  "libraryLogo": "",
+  "author": "Hazzz895",
+  "description": "Показывает обложки предыдущего и следующего трека в полноэкранном режиме.",
+  "version": "1.2.0",
+  "css": "style.css",
+  "script": "script.js",
+  "type": "script",
+  "tags": [
+    "Player",
+    "Script"
+  ],
+  "dependencies": [],
+  "conflictsWith": [],
+  "allowedUrls": [],
+  "supportedVersions": [],
+  "installSource": "local",
+  "id": "e1114e36-3e8d-49cd-b0f6-c47f0b1af6ac",
+  "storeAddonId": "1379e081-9086-4705-8bc8-682bd1ed56a1"
+}

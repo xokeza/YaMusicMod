@@ -1,0 +1,366 @@
+/* ============================================
+   CUSTOM BACKGROUND — Полный stylesheet
+   ============================================ */
+
+:root {
+    --global-blur: 0px;
+    --global-brightness: 0.4;
+    --global-pixelate: 0;
+    --global-opacity: 1;
+    --vibe-blur: 0px;
+    --vibe-brightness: 0.4;
+    --vibe-pixelate: 0;
+    --vibe-opacity: 1;
+    --vignette-opacity: 0;
+    --vibe-vignette-opacity: 0;
+}
+
+/* --- Прозрачность фона Яндекс Музыки --- */
+:root, .ym-dark-theme, .ym-light-theme, body, html {
+    --ym-background-color-primary-enabled-basic: transparent !important;
+    --ym-background-color-primary-enabled-content: transparent !important;
+    --ym-background-color-secondary-enabled-basic: transparent !important;
+    --average-color-background: transparent !important;
+    background: transparent !important;
+}
+
+.DefaultLayout_root__7J0wo {
+    background: transparent !important;
+}
+
+/* --- Скрываем старые слои --- */
+#global-background-layer,
+#vibe-media-container,
+#global-bg-picker,
+#vibe-media-picker {
+    display: none !important;
+}
+
+/* ============================================
+   НОВЫЕ КОНТЕЙНЕРЫ С CROSSFADE
+   ============================================ */
+
+/* Убран background: black – контейнер прозрачен, видно слои Chroma Sync */
+#global-background-container {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: -1 !important;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: var(--global-opacity, 1);
+}
+
+/* Гарантируем прозрачность промежуточных слоёв, чтобы фон был виден */
+[class*="CommonLayout_root"],
+[class*="DefaultLayout_root"],
+[class*="App_root"] {
+    background: transparent !important;
+    background-image: none !important;
+}
+
+#global-background-container .cbg-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    z-index: 0;
+}
+
+#global-background-container .cbg-layer.active {
+    opacity: 1;
+}
+
+#global-background-container .cbg-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(var(--global-brightness, 0.4)) blur(var(--global-blur, 0px));
+    animation: fadeInBg 0.6s ease-out forwards;
+}
+
+#global-background-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center,
+        transparent 30%,
+        rgba(0, 0, 0, 0.95) 100%
+    );
+    opacity: var(--vignette-opacity, 0);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+}
+
+#vibe-background-container {
+    position: absolute !important;
+    inset: 0 -20px -80px -20px !important;
+    z-index: 0 !important;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: var(--vibe-opacity, 1);
+    min-height: calc(100vh - 70px);
+}
+
+#vibe-background-container .cbg-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    z-index: 0;
+}
+
+#vibe-background-container .cbg-layer.active {
+    opacity: 1;
+}
+
+#vibe-background-container .cbg-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(var(--vibe-brightness, 0.4)) blur(var(--vibe-blur, 0px));
+    animation: fadeInBg 0.6s ease-out forwards;
+}
+
+#vibe-background-container .cbg-vignette {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center,
+        transparent 30%,
+        rgba(0, 0, 0, 0.95) 100%
+    );
+    opacity: var(--vibe-vignette-opacity, 0);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+}
+
+@keyframes fadeInBg {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ============================================
+   ПИКСЕЛИЗАЦИЯ (Canvas)
+   ============================================ */
+#global-pixel-canvas,
+#vibe-pixel-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    image-rendering: pixelated;
+}
+#global-pixel-canvas {
+    filter: brightness(var(--global-brightness, 0.4)) blur(var(--global-blur, 0px));
+    opacity: var(--global-opacity, 1);
+}
+#vibe-pixel-canvas {
+    filter: brightness(var(--vibe-brightness, 0.4)) blur(var(--vibe-blur, 0px));
+    opacity: var(--vibe-opacity, 1);
+}
+
+/* ============================================
+   СКРОЛЛБАР
+   ============================================ */
+::-webkit-scrollbar { 
+    width: 0px !important; 
+    background: transparent !important; 
+}
+* { 
+    scrollbar-width: none !important; 
+    -ms-overflow-style: none !important; 
+}
+
+/* ============================================
+   МЕНЮ «СМЕНА ФОНОВ»
+   ============================================ */
+
+#bg-menu-dropdown {
+    position: fixed !important;
+    width: 180px !important;
+    background: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 8px !important;
+    display: none !important;
+    flex-direction: column !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9) !important;
+    z-index: 2147483647 !important;
+    pointer-events: auto !important;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease !important;
+}
+
+#bg-menu-dropdown.active {
+    display: flex !important;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bg-menu-item {
+    padding: 12px 15px !important;
+    color: #ddd !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: background 0.2s !important;
+    pointer-events: auto !important;
+}
+
+.bg-menu-item:hover {
+    background: #333 !important;
+    color: #fff !important;
+}
+
+.bg-menu-item:not(:last-child) {
+    border-bottom: 1px solid #222 !important;
+}
+
+.bg-menu-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.bg-menu-row:not(:last-child) {
+    border-bottom: 1px solid #222 !important;
+}
+
+.bg-menu-row .bg-menu-item {
+    border-bottom: none !important;
+    flex-grow: 1 !important;
+}
+
+.bg-menu-reset {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    margin-right: 10px !important;
+    cursor: pointer !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    border-radius: 6px !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+
+.bg-menu-reset:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+.bg-menu-reset svg {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transform-origin: center center !important;
+}
+
+.bg-menu-reset:hover svg {
+    transform: rotate(180deg) !important;
+}
+
+.bg-menu-reset:active svg {
+    transform: rotate(360deg) scale(0.8) !important;
+    transition: transform 0.2s ease !important;
+}
+
+/* ============================================
+   АДАПТИВНЫЕ КНОПКИ (индикаторы)
+   ============================================ */
+#btn-toggle-adaptive-global.active,
+#btn-toggle-adaptive-vibe.active {
+    background: rgba(255, 255, 255, 0.12) !important; 
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-weight: 500 !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+#btn-toggle-adaptive-global.active:hover,
+#btn-toggle-adaptive-vibe.active:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ============================================
+   РАЗНОЕ
+   ============================================ */
+[class*="MainPage_vibe"] { 
+    background: transparent !important; 
+    position: relative !important;
+}
+
+/* Панель предпросмотра */
+#bg-preview-panel {
+    position: fixed !important;
+    z-index: 2147483646;
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    width: 160px;
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-family: 'Segoe UI', sans-serif;
+    color: #aaa;
+    font-size: 11px;
+    box-sizing: border-box;
+}
+#bg-preview-panel.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+.preview-layer-container {
+    position: relative;
+    width: 120px;
+    height: 68px;
+    margin: 0 auto;
+}
+.preview-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #000;
+}
+.preview-layer.active {
+    opacity: 1;
+}
+.preview-layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.preview-label {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    font-size: 10px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+#global-background-container .cbg-layer,
+#vibe-background-container .cbg-layer {
+    transition: transform 0.08s ease-out, background-position 0.08s ease-out;
+}

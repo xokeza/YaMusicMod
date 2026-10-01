@@ -1,0 +1,47 @@
+/* Плавные переходы для шрифтов */
+body, body * {
+  transition: font-family 0.15s ease, font-weight 0.15s ease, letter-spacing 0.15s ease;
+}
+
+/* ============================================
+   СКРЫТИЕ ВСЕХ СКРОЛЛБАРОВ НА СТРАНИЦЕ "МОЯ ВОЛНА"
+   ============================================ */
+
+/* Добавляем класс на html вручную из JS */
+html.wave-page {
+  overflow-x: hidden !important;
+  overflow-y: auto !important; /* вертикальный скроллинг остаётся (без полосы) */
+}
+
+html.wave-page body {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* Полное скрытие полосы прокрутки (для Webkit) */
+html.wave-page ::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  background: transparent !important;
+}
+
+/* Для Firefox */
+html.wave-page {
+  scrollbar-width: none !important;
+}
+
+/* Дополнительно ограничиваем ширину проблемных контейнеров */
+html.wave-page [class*="VibePlayerbarMeta_progress"],
+html.wave-page [class*="VibePlayerbarMeta_slider"],
+html.wave-page .VibePlayerbarMeta_progress,
+html.wave-page .VibePlayerbarMeta_slider {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Сам ползунок не должен выходить за пределы */
+html.wave-page input[class*="VibePlayerbarMeta_slider"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+

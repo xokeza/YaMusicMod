@@ -1,0 +1,146 @@
+.FullscreenPlayerDesktopPoster_root__d__YD {
+    overflow: visible;
+}
+
+.FullscreenPlayerDesktopPoster_cover__CDmhM {
+    border-radius: var(--ym-radius-size-m);
+}
+
+.FullscreenPlayerDesktopPoster_cover_queue {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.4s ease-in-out;
+}
+
+
+.FullscreenPlayerDesktopPoster_cover_queueActive {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+    z-index: 301; 
+}
+
+.FullscreenPlayerDesktopPoster_cover_queuePaused {
+    transform: translate(0, 0) scale(0.95);
+    opacity: 1;
+    z-index: 301;
+}
+
+.FullscreenPlayerDesktopControls_root__tviu4 {
+    transition: scale 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity var(--ym-duration-transition);
+}
+
+.FullscreenPlayerDesktopPoster_root__d__YD:has(.FullscreenPlayerDesktopPoster_cover_queuePaused) > .FullscreenPlayerDesktopControls_root__tviu4 {
+    scale: 0.95;
+}
+
+div:has(.FullscreenPlayerDesktopContent_additionalContent__tuuy7) :is(.FullscreenPlayerDesktopPoster_cover_queuePrev, .FullscreenPlayerDesktopPoster_cover_queueNext) {
+    opacity: 0;
+}
+
+@property --cover_width_multiplier {
+    syntax: '<number>';
+    initial-value: 25;
+    inherits: true;
+}
+
+@property --screen_width_multiplier {
+    syntax: '<number>';
+    initial-value: 100;
+    inherits: true;
+}
+
+.FullscreenPlayerDesktopPoster_cover_queuePrev {
+    transform: translate(calc(-50vw * var(--screen-width-multiplier) / 100 - var(--fullscreen-player-poster-size-px) * var(--cover-width-multiplier) / 100 * 0.8), 0) scale(0.8);
+    opacity: 1;
+    z-index: 300;
+}
+
+.FullscreenPlayerDesktopPoster_cover_queuePrev_out {
+    transform: translate(calc(-50vw * var(--screen-width-multiplier) / 100 - var(--fullscreen-player-poster-size-px) * var(--cover-width-multiplier) / 100 * 0.5), 0) scale(0.5);
+    opacity: 0;
+    z-index: 299;
+}
+
+.FullscreenPlayerDesktopPoster_cover_queueNext {
+    transform: translate(calc(50vw * var(--screen-width-multiplier) / 100 + var(--fullscreen-player-poster-size-px) * var(--cover-width-multiplier) / 100 * 0.8), 0) scale(0.8);
+    opacity: 1;
+    z-index: 300;
+}
+
+.FullscreenPlayerDesktopPoster_cover_queueNext_out {
+    transform: translate(calc(50vw * var(--screen-width-multiplier) / 100 + var(--fullscreen-player-poster-size-px) * var(--cover-width-multiplier) / 100 * 0.5), 0) scale(0.5);
+    opacity: 0;
+    z-index: 299;
+}
+
+.FullscreenPlayerDesktopPoster_cover_hide_main {
+    opacity: 0;
+}
+
+.FullscreenPlayerDesktopControls_root__tviu4 {
+    background-color: transparent;
+}
+
+.FullscreenPlayerDesktopPoster_root__d__YD {
+    box-shadow: none;
+}
+
+[data-test-id="FULLSCREEN_PLAYER_MODAL"], [data-test-id="MOBILE_FULLSCREEN_PLAYER_MODAL"] {
+    transition-property: opacity, transform, background-color !important;
+    transition-duration: 300ms, 300ms, 600ms !important;
+}
+
+@property --gradient-width-multiplier {
+    syntax: '<number>';
+    initial-value: 100;
+    inherits: true;
+}
+
+@property --gradient-alpha {
+    syntax: '<number>';
+    initial-value: 60;
+    inherits: true;
+}
+
+@property --previous-track-accent-color {
+  syntax: '<color>';
+  initial-value: transparent;
+  inherits: true;
+}
+
+.FullscreenPlayerDesktopContent_root__tKNGK::before {
+    transition: --previous-track-accent-color 500ms ease, opacity 300ms ease;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--previous-track-accent-color, transparent) calc(var(--gradient-alpha) * 1%), transparent) 0, transparent 100%);
+    content: "";
+    width: calc(10% * var(--gradient-width-multiplier) / 100);
+    height: 100%;
+    position: absolute;
+    inset-inline-start: 0;
+}
+
+@property --next-track-accent-color {
+  syntax: '<color>';
+  initial-value: transparent;
+  inherits: true;
+}
+
+.FullscreenPlayerDesktopContent_root__tKNGK::after {
+    transition: --next-track-accent-color 500ms ease, opacity 300ms ease;
+    background: linear-gradient(270deg, color-mix(in srgb, var(--next-track-accent-color, transparent) calc(var(--gradient-alpha) * 1%), transparent) 0, transparent 100%);
+    content: "";
+    width: calc(10% * var(--gradient-width-multiplier) / 100);
+    height: 100%;
+    position: absolute;
+    inset-inline-end: 0;
+}
+
+div:has(.FullscreenPlayerDesktopContent_additionalContent__tuuy7) .FullscreenPlayerDesktopContent_root__tKNGK::before,
+div:has(.FullscreenPlayerDesktopContent_additionalContent__tuuy7) .FullscreenPlayerDesktopContent_root__tKNGK::after {
+    opacity: 0 !important;
+}

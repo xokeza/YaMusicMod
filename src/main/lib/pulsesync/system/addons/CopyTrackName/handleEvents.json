@@ -1,0 +1,147 @@
+{
+    "sections": [
+        {
+            "title": "Основные настройки",
+            "items": [
+                {
+                    "id": "enableCopyIcon",
+                    "name": "Показывать иконку копирования",
+                    "description": "Отображать иконку копирования рядом с названием трека",
+                    "type": "button",
+                    "bool": true,
+                    "defaultParameter": true
+                },
+                {
+                    "id": "copyFormat",
+                    "name": "Формат копирования",
+                    "description": "Выберите формат для копирования информации о треке",
+                    "type": "selector",
+                    "selected": 1,
+                    "options": {
+                        "1": {
+                            "event": "artistDashTitle",
+                            "name": "Исполнитель - Название"
+                        },
+                        "2": {
+                            "event": "titleDashArtist",
+                            "name": "Название - Исполнитель"
+                        },
+                        "3": {
+                            "event": "artistOnly",
+                            "name": "Только исполнитель"
+                        },
+                        "4": {
+                            "event": "titleOnly",
+                            "name": "Только название"
+                        }
+                    },
+                    "defaultParameter": 1
+                },
+                {
+                    "id": "showNotification",
+                    "name": "Показывать уведомления",
+                    "description": "Отображать уведомление при успешном копировании",
+                    "type": "button",
+                    "bool": true,
+                    "defaultParameter": true
+                }
+            ]
+        },
+        {
+            "title": "Внешний вид",
+            "items": [
+                {
+                    "id": "iconColor",
+                    "name": "Статический цвет",
+                    "description": "Использовать статический цвет вместо динамического",
+                    "type": "button",
+                    "bool": false,
+                    "defaultParameter": false
+                },
+                {
+                    "id": "customColor",
+                    "name": "Выбор цвета",
+                    "description": "Цвет иконки (работает только при включенном статическом цвете)",
+                    "type": "color",
+                    "input": "#ffffff",
+                    "defaultParameter": "#ffffff"
+                },
+                {
+                    "id": "iconSize",
+                    "name": "Размер иконки",
+                    "description": "Размер иконки копирования в пикселях",
+                    "type": "slider",
+                    "min": 12,
+                    "max": 24,
+                    "step": 2,
+                    "value": 16,
+                    "defaultParameter": 16
+                },
+                {
+                    "id": "iconOpacity",
+                    "name": "Прозрачность иконки",
+                    "description": "Прозрачность иконки в неактивном состоянии (5-100%)",
+                    "type": "slider",
+                    "min": 5,
+                    "max": 100,
+                    "step": 5,
+                    "value": 70,
+                    "defaultParameter": 70
+                },
+                {
+                    "id": "iconPosition",
+                    "name": "Позиция иконки",
+                    "description": "Где отображать иконку копирования относительно названия трека",
+                    "type": "selector",
+                    "selected": 1,
+                    "options": {
+                        "1": {
+                            "event": "positionAfterTitle",
+                            "name": "Справа от названия трека"
+                        },
+                        "2": {
+                            "event": "positionBeforeTitle",
+                            "name": "Слева от названия трека"
+                        }
+                    },
+                    "defaultParameter": 1
+                },
+                {
+                    "id": "positionBeforeTitleFullscreenOnly",
+                    "name": "Слева от названия — только в полноэкранном",
+                    "description": "Если включено, позиция «Слева от названия» применяется только в полноэкранном плеере. В навбаре иконка будет справа",
+                    "type": "button",
+                    "bool": true,
+                    "defaultParameter": true
+                }
+            ]
+        },
+        {
+            "title": "Дополнительно",
+            "items": [
+                {
+                    "id": "customFormat",
+                    "name": "Пользовательский формат",
+                    "description": "Используйте {artist} и {title} для создания своего формата",
+                    "type": "text",
+                    "buttons": [
+                        {
+                            "id": "customFormatText",
+                            "name": "Формат",
+                            "text": "{artist} - {title}",
+                            "defaultParameter": "{artist} - {title}"
+                        }
+                    ]
+                },
+                {
+                    "id": "enableCustomFormat",
+                    "name": "Использовать пользовательский формат",
+                    "description": "Включить использование пользовательского формата вместо стандартных",
+                    "type": "button",
+                    "bool": false,
+                    "defaultParameter": false
+                }
+            ]
+        }
+    ]
+}
