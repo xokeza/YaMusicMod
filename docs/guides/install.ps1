@@ -127,7 +127,7 @@ if ($markerIdx -ge 0) {
 
 Write-Host ""
 Write-Host "========================================================" -ForegroundColor Green
-Write-Host "  Модификация YaMusicMod успешно установлена! 🎉" -ForegroundColor Green
+Write-Host "  Модификация YaMusicMod успешно установлена! ✓" -ForegroundColor Green
 Write-Host "========================================================" -ForegroundColor Green
 Write-Host ""
 

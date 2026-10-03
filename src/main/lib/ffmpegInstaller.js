@@ -292,7 +292,7 @@ class FfmpegUpdater {
                 }
             }
 
-            // ✅ Очистка кеша после успешной установки
+            // [ok] Очистка кеша после успешной установки
             await this.clearCache();
 
             this.isInstalledValidated = true;
