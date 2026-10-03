@@ -44,6 +44,7 @@ const { getPulseSyncAppInstaller } = require('./lib/pulsesyncAppInstaller.js');
 const taskBarExtension_js_1 = require('./lib/taskBarExtension/taskBarExtension.js');
 const scrobbleManager_js_1 = require('./lib/scrobble/index.js');
 const { getPulseSyncManager } = require('./lib/pulsesync/PulseSyncManager.js');
+const { getLLMusicStatsTracker } = require('./lib/llmusicStatsTracker.js');
 const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const discordRichPresence_js_1 = require('./lib/discordRichPresence.js');
 const { getYandexStationRuntime } = require('./lib/yandexStation/YandexStationRuntime.js');
@@ -99,6 +100,7 @@ const PLAYLIST_LINK_IMPORT_UPLOAD_TIMEOUT_MS = 15 * 60 * 1000;
 const PLAYLIST_LINK_IMPORT_MAX_FILE_SIZE_BYTES = 0x19000000;
 const playlistLinkImportUploadWaiters = new Map();
 let pulseSyncManager_js_1;
+let llmusicStatsTracker;
 const repairPlaylistLinkImportMessage = (value) => {
     let text = String(value || '');
 
@@ -394,6 +396,8 @@ const handleApplicationEvents = (window) => {
     pulseSyncManager_js_1 = getPulseSyncManager(window);
     pulseSyncManager_js_1.start();
     scrobbleManager_js_1.handleRegisterPulseSyncScrobbler(pulseSyncManager_js_1);
+    llmusicStatsTracker = (0, getLLMusicStatsTracker)(window);
+    llmusicStatsTracker.init();
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_CURRENT_TRACK, async (event, trackId) => {
         let callback = (progressRenderer, progressWindow) => {
@@ -1043,6 +1047,9 @@ const handleApplicationEvents = (window) => {
             const isActiveState = ['paused', 'playing'].includes(data?.status);
             const isPlayable = isPlayerReady && data.status !== 'idle' && isActiveState;
 
+            if (llmusicStatsTracker) {
+                llmusicStatsTracker.handlePlayerState(data);
+            }
             MiniPlayer.updatePlayerState(structuredClone(data));
             (0, taskBarExtension_js_1.onPlayerStateChange)(window, data);
 
@@ -1263,6 +1270,19 @@ const handleApplicationEvents = (window) => {
             eventsLogger.error(`${events_js_1.Events.GET_YANDEX_UID} event failed.`, error);
             return;
         }
+    });
+    electron_1.ipcMain.handle("llmusic-get-stats", () => {
+        return llmusicStatsTracker ? llmusicStatsTracker.getStatus() : null;
+    });
+    electron_1.ipcMain.handle("llmusic-sync-now", async () => {
+        if (!llmusicStatsTracker) return null;
+        await llmusicStatsTracker.tick(true);
+        return llmusicStatsTracker.getStatus();
+    });
+    electron_1.ipcMain.handle("llmusic-check-auth", async () => {
+        if (!llmusicStatsTracker) return null;
+        await llmusicStatsTracker.checkAuth();
+        return llmusicStatsTracker.getStatus();
     });
 };
 const sendProgressBarChange = (window, elementType, progress, statusLabel, operationNonce) => {

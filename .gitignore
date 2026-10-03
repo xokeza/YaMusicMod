@@ -111,6 +111,7 @@ Thumbs.db
 # Agent / AI local workspace dirs
 .agents/
 .gemini/
+tasks.md
 
 # Package managers lock files & builds
 package-lock.json
@@ -161,4 +162,3 @@ overlay-runtime
 
 # Isolated website source
 website/
-

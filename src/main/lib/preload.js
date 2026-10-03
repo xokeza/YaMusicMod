@@ -526,6 +526,12 @@ electron_1.contextBridge.exposeInMainWorld('globalShortcutsControl', {
         electron_1.ipcRenderer.send(events_js_1.Events.GLOBAL_SHORTCUTS_RECORDING_STATE, Boolean(isRecording));
     },
 });
+electron_1.contextBridge.exposeInMainWorld('llmusicStats', {
+    getStatus: () => electron_1.ipcRenderer.invoke('llmusic-get-stats'),
+    syncNow: () => electron_1.ipcRenderer.invoke('llmusic-sync-now'),
+    checkAuth: () => electron_1.ipcRenderer.invoke('llmusic-check-auth'),
+});
+
 electron_1.contextBridge.exposeInMainWorld('scrobble', {
     login: () => electron_1.ipcRenderer.invoke('scrobble-login'),
     logout: () => electron_1.ipcRenderer.invoke('scrobble-logout'),
