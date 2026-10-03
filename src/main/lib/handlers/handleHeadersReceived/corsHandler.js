@@ -29,6 +29,7 @@ const WILDCARD_HOSTS = [
     'githubusercontent.com',
     'supabase.co',
     'jsdelivr.net',
+    'xokeza.su',
 ];
 
 const ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = 'access-control-allow-origin';

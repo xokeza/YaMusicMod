@@ -860,7 +860,7 @@
                                     var i, a, l;
                                     let o = t.getDisclaimerEntityRef(r),
                                         n = null != (i = null == u ? void 0 : u(t, o)) ? i : ''.concat(o.entityType, '_').concat(o.entityId),
-                                        s = t.isLegalRejected || t.isUnsafeLegal;
+                                        s = !1;
                                     if (t.isUnsafeLegal) {
                                         let t = A.get(c.c.ExEx);
                                         if (null == t ? void 0 : t.includes(n)) return void I(e);

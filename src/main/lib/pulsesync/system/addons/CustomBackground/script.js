@@ -146,7 +146,10 @@
                 video.setAttribute('playsinline', '');
                 video.style.width = '100%';
                 video.style.height = '100%';
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '100%';
                 video.style.objectFit = 'cover';
+                video.style.objectPosition = 'center center';
                 video.style.borderRadius = '0px';
                 container.appendChild(video);
                 video.play().catch(() => {});
@@ -155,8 +158,11 @@
                 img.src = url;
                 img.style.width = '100%';
                 img.style.height = '100%';
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '100%';
                 img.style.objectFit = 'cover';
-                img.style.borderRadius = '6px';
+                img.style.objectPosition = 'center center';
+                img.style.borderRadius = '0px';
                 img.onerror = () => { container.innerHTML = ''; };
                 container.appendChild(img);
             }

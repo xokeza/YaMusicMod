@@ -1929,7 +1929,7 @@
                         ea();
                     }),
                     en = (0, o.c)((e) => {
-                        if (!r.isAvailable && !r.hasModalAccess) {
+                        if (!1 && !r.hasModalAccess) {
                             M && r.isAvailableOnlyForPlus && E(), X && r.isAvailableOnlyForPlus && U.open();
                             return;
                         }

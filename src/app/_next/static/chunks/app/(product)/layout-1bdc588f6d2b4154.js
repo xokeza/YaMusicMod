@@ -5425,7 +5425,7 @@
                     return this.entityData;
                 }
                 get isAvailable() {
-                    return !!('available' in this.entityData.meta && this.entityData.meta.available);
+                    return !0;
                 }
                 get isDisliked() {
                     return void 0 !== this.likeStore && this.likeStore.isTrackDisliked(this.entityData.meta.id);
@@ -5527,8 +5527,10 @@
                     void 0 === a.fromCurrentContext && (a.fromCurrentContext = !0);
                     try {
                         switch (a.type) {
+                            case "track":
+                            case "music":
                             case q.R.Music:
-                                t = new j({ data: a, likeStore: this.likeStore });
+                                t = new j({ data: { ...a, type: q.R.Music }, likeStore: this.likeStore });
                                 break;
                             case q.R.DownloadedMusic:
                                 t = new Y({ data: a, likeStore: this.likeStore });
@@ -5553,6 +5555,12 @@
                                 break;
                             case F.z4.Unloaded:
                                 t = new H({ data: a, likeStore: this.likeStore });
+                                break;
+                            default:
+                                if (a && a.meta) {
+                                    t = new j({ data: { ...a, type: q.R.Music }, likeStore: this.likeStore });
+                                }
+                                break;
                         }
                     } catch (e) {
                         throw new Q('Error while creating entity', { cause: e, data: { type: a.type, meta: a.meta } });
@@ -7054,15 +7062,18 @@
                 }
                 apply(e) {}
                 loadContextMeta() {
+                    if (this.contextData && this.contextData.meta && this.contextData.meta.title) return Promise.resolve(this.contextData.meta);
                     let e = this.getContextId();
                     return this.tracksResource
                         .getTracksMeta({ trackIds: [e], withProgress: !0 })
                         .then((t) => {
                             let a = t[0];
                             if (a) return (this.contextData.meta = a), a;
+                            if (this.contextData && this.contextData.meta) return this.contextData.meta;
                             throw new ei('Error in VariousContext. Track not found', { code: 'E_VARIOUS_LOAD_CONTEXT_META', data: { contextId: e } });
                         })
                         .catch((t) => {
+                            if (this.contextData && this.contextData.meta) return this.contextData.meta;
                             throw new ei('Error in VariousContext', { code: 'E_VARIOUS_LOAD_CONTEXT_META', cause: t, data: { contextId: e } });
                         });
                 }
@@ -10111,7 +10122,7 @@
                                 'Safari' === this.browserName && (a = ''.concat(2 * e, 'x').concat(2 * e));
                                 let r = '';
                                 return (
-                                    'string' == typeof t && (r = t.startsWith('blob:') ? t : 'https://'.concat(t.replace('%%', a))),
+                                    'string' == typeof t && (r = (t.startsWith('blob:') || t.startsWith('data:') || t.startsWith('http://') || t.startsWith('https://')) ? t.replace('%%', a) : 'https://'.concat(t.replace('%%', a))),
                                     { sizes: a, src: r, type: 'image/jpg' }
                                 );
                             })),
@@ -10392,6 +10403,10 @@
                     var e, t;
                     if ('error' in this.data) throw new z.t('Error in DownloadInfoSource data', { data: { error: this.data.error } });
                     if (!this.data.urls[0]) throw new z.t('No urls in DownloadInfoSource');
+                    const firstUrl = this.data.urls[0];
+                    if (!firstUrl.includes('yandex.') || firstUrl.includes('xokeza.su') || firstUrl.includes('dzcdn.net') || firstUrl.includes('apple.com') || firstUrl.includes('blob:')) {
+                        return firstUrl;
+                    }
                     let a = this.getQueryParamsString();
                     return a
                         ? ''
@@ -12678,7 +12693,15 @@
                         n = r.join(''),
                         o = i.join(''),
                         l = ''.concat(s).concat(t).concat(a).concat(n).concat(o);
-                    return new Promise((e, o) => {
+                    return new Promise(async (resolvePromise, o) => {
+                        try {
+                            if (window.__deltracks?.resolveAudioForTrackId) {
+                                const fallback = await window.__deltracks.resolveAudioForTrackId(t, e.entity);
+                                if (fallback) {
+                                    return resolvePromise({ downloadInfo: { codec: 'mp3', gain: !1, preview: !1, transport: 'raw', urls: [fallback] }, responseTime: 10, url: fallback });
+                                }
+                            }
+                        } catch (_) {}
                         this.tools
                             .createSign({ data: l, secretKey: this.secretKey })
                             .then((l) => {
@@ -12693,10 +12716,18 @@
                                         fromPromoLanding: this.variables.fromPromoLanding,
                                     })
                                     .then((t) => {
-                                        e({ downloadInfo: t.downloadInfo, responseTime: t.responseTime, url: t.url });
+                                        resolvePromise({ downloadInfo: t.downloadInfo, responseTime: t.responseTime, url: t.url });
                                     })
-                                    .catch((e) => {
-                                        o(new am('Error in get-file-info request', { code: A.E_GET_MEDIA_SRC, cause: e, data: { trackId: t, quality: a, codecs: n } }));
+                                    .catch(async (err) => {
+                                        try {
+                                            if (window.__deltracks?.resolveAudioForTrackId) {
+                                                const fallback = await window.__deltracks.resolveAudioForTrackId(t, e.entity);
+                                                if (fallback) {
+                                                    return resolvePromise({ downloadInfo: { codec: 'mp3', gain: !1, preview: !1, transport: 'raw', urls: [fallback] }, responseTime: 50, url: fallback });
+                                                }
+                                            }
+                                        } catch (_) {}
+                                        o(new am('Error in get-file-info request', { code: A.E_GET_MEDIA_SRC, cause: err, data: { trackId: t, quality: a, codecs: n } }));
                                     });
                             })
                             .catch((e) => {
@@ -12719,7 +12750,7 @@
                         } catch (e) {
                             return Promise.reject(e);
                         }
-                    return this.getFileInfoFromResource({ trackId: t.data.meta.id, quality: i, codecs: r, transports: s });
+                    return this.getFileInfoFromResource({ trackId: t.data.meta.id, quality: i, codecs: r, transports: s, entity: t });
                 }
                 getMediaSource(e) {
                     let { entity: t, disableCache: a = !1 } = e,
@@ -14906,9 +14937,8 @@
                         ((e) => {
                             let { sonata: t, isEnabled: a } = e;
                             (0, O.useEffect)(() => {
-                                a &&
-                                    t &&
-                                    ((window.sonataState = t.state),
+                                t &&
+                                    ((window.sonata = t, window.sonataState = t.state),
                                     Object.defineProperty(window, 'sonataPlaybackStates', {
                                         configurable: !0,
                                         enumerable: !0,

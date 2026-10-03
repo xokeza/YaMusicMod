@@ -249,7 +249,7 @@
                                     var o, a, n;
                                     let r = t.getDisclaimerEntityRef(i),
                                         l = null != (o = null == u ? void 0 : u(t, r)) ? o : ''.concat(r.entityType, '_').concat(r.entityId),
-                                        s = t.isLegalRejected || t.isUnsafeLegal;
+                                        s = !1;
                                     if (t.isUnsafeLegal) {
                                         let t = h.get(d.c.ExEx);
                                         if (null == t ? void 0 : t.includes(l)) return void S(e);
@@ -268,7 +268,7 @@
                                         let i = L.current,
                                             o = await t.getModalDisclaimerData();
                                         if (L.current !== i || !1 === j.current) return;
-                                        _.setModalData(null != o ? o : null), (g.current = !1), b.open();
+                                        _.setModalData(null != o ? o : null), (g.current = !1), !1;
                                         return;
                                     }
                                     x && (null == e || e.preventDefault()), S(e);

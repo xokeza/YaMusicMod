@@ -1,0 +1,69 @@
+name: Release YaMusicMod
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build app.asar
+        run: node toolset.js build --noNativeModules
+
+      - name: Package zip archives
+        run: |
+          mkdir -p dist/packages
+
+          # Linux
+          mkdir -p dist/linux
+          cp builds/latest/app.asar dist/linux/app.asar
+          cp docs/guides/guide_linux.md dist/linux/guide.md
+          (cd dist/linux && zip -r ../packages/YaMusicMod-Linux.zip app.asar guide.md)
+
+          # Windows
+          mkdir -p dist/windows
+          cp builds/latest/app.asar dist/windows/app.asar
+          cp docs/guides/guide_windows.md dist/windows/guide.md
+          (cd dist/windows && zip -r ../packages/YaMusicMod-Windows.zip app.asar guide.md)
+
+          # macOS
+          mkdir -p dist/macos
+          cp builds/latest/app.asar dist/macos/app.asar
+          cp docs/guides/guide_macos.md dist/macos/guide.md
+          (cd dist/macos && zip -r ../packages/YaMusicMod-macOS.zip app.asar guide.md)
+
+          cp builds/latest/app.asar dist/packages/app.asar
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.4.2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: YaMusicMod ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          body_path: docs/guides/RELEASE_NOTES.md
+          files: |
+            dist/packages/YaMusicMod-Linux.zip
+            dist/packages/YaMusicMod-Windows.zip
+            dist/packages/YaMusicMod-macOS.zip
+            dist/packages/app.asar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

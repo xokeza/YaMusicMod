@@ -1,0 +1,27 @@
+{
+    "name": "DelTracks",
+    "author": "xokeza",
+    "description": "Автоматически возвращает удалённые и заблокированные РКН треки на страницы артистов и в альбомы.",
+    "version": "1.0.0",
+    "image": "image.png",
+    "banner": "banner.jpg",
+    "css": "style.css",
+    "script": "script.js",
+    "type": "script",
+    "tags": [
+        "script",
+        "tracks",
+        "restore",
+        "music"
+    ],
+    "allowedUrls": [
+        "https://raw.githubusercontent.com",
+        "https://github.com",
+        "https://api.github.com",
+        "https://xokeza.su",
+        "http://xokeza.su"
+    ],
+    "installSource": "local",
+    "id": "deltracks",
+    "storeAddonId": "deltracks-xokeza"
+}

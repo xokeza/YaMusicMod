@@ -1017,8 +1017,7 @@
             var M = a(65476),
                 B = a(3785);
             let w = (e) => {
-                var t;
-                return (null == e ? void 0 : e.available) === !1 && !!(null == (t = e.disclaimers) ? void 0 : t.includes(B.M.MODAL));
+                return !1;
             };
             var D = a(83920),
                 R = a(3796),
@@ -2037,7 +2036,7 @@
             let an = (0, l.PA)(() => {
                 var e, t, a, l, s, c, u, m;
                 let b = (0, n.useRef)(null),
-                    v = (0, n.useRef)(0),
+                    vErrRef = (0, n.useRef)(0),
                     p = (0, tn.w)(),
                     { notify: x } = (0, eo.l)(),
                     h = (0, tt.Q)(),
@@ -2063,7 +2062,7 @@
                     H = g.isPlusCPAPlayerBarEnabled(A.id, null == (e = A.meta) ? void 0 : e.isNonMusic) && C;
                 (0, n.useEffect)(
                     () => () => {
-                        v.current = 0;
+                        vErrRef.current = 0;
                     },
                     [A],
                 ),
@@ -2073,8 +2072,8 @@
                     (0, n.useEffect)(() => {
                         var e, t;
                         if ((null == (e = A.otherArtistAlbums) ? void 0 : e.isRejected) || (null == (t = A.latestGenreAlbums) ? void 0 : t.isRejected)) {
-                            if (!v || v.current > 0) return;
-                            x((0, i.jsx)(er.h, { error: L({ id: 'album-errors.error-during-loading-similar-albums' }) }), { containerId: en.u.ERROR }), v.current++;
+                            if (!vErrRef || vErrRef.current > 0) return;
+                            x((0, i.jsx)(er.h, { error: L({ id: 'album-errors.error-during-loading-similar-albums' }) }), { containerId: en.u.ERROR }), vErrRef.current++;
                         }
                     }, [null == (t = A.latestGenreAlbums) ? void 0 : t.isRejected, null == (a = A.otherArtistAlbums) ? void 0 : a.isRejected, L, x]),
                     (0, n.useEffect)(() => {

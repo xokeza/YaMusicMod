@@ -12175,7 +12175,7 @@
                     withOverlay: !0,
                     overlayColor: 'transparent',
                     labelClose: s({ id: 'interface-actions.close' }),
-                    open: t.isOpened,
+                    open: !1,
                     onOpenChange: t.onOpenChange,
                     onClose: t.close,
                     showHeader: !0,

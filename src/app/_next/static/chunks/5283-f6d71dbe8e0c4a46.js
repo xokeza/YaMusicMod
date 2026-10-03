@@ -478,12 +478,12 @@
                 var i, t, r, n, a, l;
                 let s = null == (i = e.available) || i,
                     o = null != (t = e.disclaimers) ? t : [];
-                return (
-                    e.contentRestrictions &&
-                        ((s = null == (a = null == (r = e.contentRestrictions) ? void 0 : r.available) || a),
-                        (o = null != (l = null == (n = e.contentRestrictions) ? void 0 : n.disclaimers) ? l : [])),
-                    { available: s, disclaimers: o }
-                );
+                if (e.contentRestrictions) {
+                    s = null == (a = null == (r = e.contentRestrictions) ? void 0 : r.available) || a;
+                    o = null != (l = null == (n = e.contentRestrictions) ? void 0 : n.disclaimers) ? l : [];
+                }
+                if (s === !1 && o && o.length > 0) { s = !0; o = o.filter((x) => !String(x).toLowerCase().includes("modal")); }
+                return { available: s, disclaimers: o };
             };
         },
         54667: (e, i, t) => {
@@ -750,7 +750,7 @@
                     });
                 return (0, n.wg)({
                     id: (e.id || 0).toString(),
-                    isAvailable: !!(null == e ? void 0 : e.available),
+                    isAvailable: !0,
                     isRemoved: (null == e ? void 0 : e.error) === 'not-found',
                     title: e?.substituted?.title ?? e?.title ?? '',
                     version: e?.substituted?.version ?? e?.version,
@@ -761,10 +761,7 @@
                     trackParameters: null == e ? void 0 : e.trackParameters,
                     trackSource: null == e ? void 0 : e.trackSource,
                     albumId: null == (o = e.albums) || null == (s = o[0]) ? void 0 : s.id,
-                    disclaimers:
-                        e?.isSubstituted || e?.substituted
-                            ? Array.from(new Set([...(e.disclaimers ?? []), 'substitutedIcon:pulsesync-substituted', 'descriptionText:pulsesync-substituted']))
-                            : e.disclaimers,
+                    disclaimers: (e?.disclaimers ? e.disclaimers.filter(d => !String(d).toLowerCase().includes('modal')) : e.disclaimers),
                     type: e.type,
                     pubDate: e.pubDate,
                     hasLyrics: null == (u = e.lyricsInfo) ? void 0 : u.hasAvailableTextLyrics,

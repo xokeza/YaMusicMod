@@ -298,7 +298,7 @@
                         return (0, n.Ve)(e.disclaimers, n.Yw.MODAL);
                     },
                     getIsLegalRejected(t) {
-                        return !!(0, i._n)(e) && !t && this.hasModalDisclaimer;
+                        return !1;
                     },
                     getIsUnsafeLegal(t) {
                         return !!(0, i._n)(e) && !!e.disclaimers && t && this.hasModalDisclaimer;
@@ -321,12 +321,7 @@
                         for (let e of t) e.title && r.push(e.title);
                         return r.length > 0 ? r : null;
                     },
-                    get resolvedModalData() {
-                        var r;
-                        if (!e.resolvedDisclaimers) return null;
-                        let t = e.resolvedDisclaimers[n.Yw.MODAL];
-                        return null != (r = null == t ? void 0 : t[0]) ? r : null;
-                    },
+                    get resolvedModalData() { return null; },
                 }))
                 .actions((e) => {
                     let { disclaimerDictionary: t, modelActionsLogger: r } = (0, i._$)(e),
@@ -344,11 +339,7 @@
                         getDisclaimerData: (0, i.L3)(function* (e) {
                             return yield l(e);
                         }),
-                        getModalDisclaimerData: (0, i.L3)(function* () {
-                            var e;
-                            let t = yield l(n.Yw.MODAL);
-                            return t && null != (e = t[0]) ? e : null;
-                        }),
+                        getModalDisclaimerData: (0, i.L3)(function* () { return null; }),
                         getForeignAgentDisclaimerData: (0, i.L3)(function* () {
                             var e;
                             let t = yield l(n.Yw.FOREIGN_AGENT);

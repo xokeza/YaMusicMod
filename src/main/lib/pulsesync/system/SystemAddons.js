@@ -24,6 +24,7 @@ const SYSTEM_IDS = new Set([
     'betterqueue',
     'custombackground',
     'customfonts',
+    'deltracks',
     'chromasync',
     'chromasynclite',
 ]);
@@ -38,6 +39,7 @@ const BUILTIN_ADDON_SPECS = [
     { dir: 'BetterQueue', order: 30, id: 'betterqueue', defaultName: 'BetterQueue' },
     { dir: 'CustomBackground', order: 40, id: 'custombackground', defaultName: 'Custom Background' },
     { dir: 'CustomFonts', order: 50, id: 'customfonts', defaultName: 'Custom Fonts' },
+    { dir: 'DelTracks', order: 60, id: 'deltracks', defaultName: 'DelTracks' },
 ];
 
 function extractDefaultSettings(dirPath) {

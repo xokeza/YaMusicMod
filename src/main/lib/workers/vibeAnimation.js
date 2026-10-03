@@ -591,15 +591,16 @@
             if (r === s) return;
             t.renderer.state.uniformLocations.set(i, s);
         }
-        switch (e) {
-            case 5126:
-                return s.length ? t.uniform1fv(i, s) : t.uniform1f(i, s);
-            case 35664:
-                return t.uniform2fv(i, s);
-            case 35665:
-                return t.uniform3fv(i, s);
-            case 35666:
-                return t.uniform4fv(i, s);
+        try {
+            switch (e) {
+                case 5126:
+                    return s.length ? t.uniform1fv(i, s) : t.uniform1f(i, s);
+                case 35664:
+                    return s.length >= 2 ? t.uniform2fv(i, s) : void 0;
+                case 35665:
+                    return s.length >= 3 ? t.uniform3fv(i, s) : void 0;
+                case 35666:
+                    return s.length >= 4 ? t.uniform4fv(i, s) : void 0;
             case 35670:
             case 5124:
             case 35678:
@@ -622,7 +623,8 @@
                 return t.uniformMatrix3fv(i, !1, s);
             case 35676:
                 return t.uniformMatrix4fv(i, !1, s);
-        }
+            }
+        } catch (_) {}
     }
     function A(t) {
         let e = t.split('\n');

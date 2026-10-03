@@ -12,6 +12,7 @@ const events_js_1 = require('../../events.js');
 const config_js_1 = require('../../config.js');
 const store_js_1 = require('../store.js');
 const tray_js_1 = require('../tray.js');
+const modUpdater_js_1 = require('../modUpdater.js');
 const lifecycleLogger = new Logger_js_1.Logger('WindowLifecycle');
 const USER_ID_IFRAME_URL_REGEXP = /^https:\/\/yandex.\w{2,3}\/user-id/;
 const NAVIGATION_ABORTED_ERROR_CODE = -3;
@@ -147,6 +148,43 @@ const handleWindowLifecycleEvents = (window) => {
             (0, loadURL_js_1.loadUnavailableErrorPage)(window);
         }
     });
+    
+    webContents.on("console-message", (event, level, message, line, sourceId) => {
+        if (level >= 2 || (message && (message.includes("Error") || message.includes("error") || message.includes("Uncaught")))) {
+            lifecycleLogger.error(`[Renderer Console] [Level ${level}] ${message} (${sourceId}:${line})`);
+        }
+    });
+
+    
+    webContents.on("before-input-event", (event, input) => {
+        if (input.type === "keyDown") {
+            // F12 or Ctrl+Shift+I: Toggle DevTools
+            if (input.key === "F12" || (input.control && input.shift && input.key.toLowerCase() === "i")) {
+                if (webContents.isDevToolsOpened()) {
+                    webContents.closeDevTools();
+                } else {
+                    webContents.openDevTools({ mode: "detach" });
+                }
+            }
+
+            // Ctrl+R or F5: Full reload & check/pull updates from GitHub
+            if ((input.control && input.key.toLowerCase() === "r") || input.key === "F5") {
+                lifecycleLogger.info("Ctrl+R / F5 pressed: full reload and checking GitHub releases...");
+                try {
+                    const modUpdater = (0, modUpdater_js_1.getModUpdater)();
+                    if (modUpdater) {
+                        modUpdater.check(true).catch((err) => {
+                            lifecycleLogger.error("Failed to check updates on reload:", err);
+                        });
+                    }
+                } catch (err) {
+                    lifecycleLogger.error("ModUpdater error on reload:", err);
+                }
+                webContents.reloadIgnoringCache();
+            }
+        }
+    });
+
     webContents.on('did-finish-load', () => {
         webContents.insertCSS(`
                 body {

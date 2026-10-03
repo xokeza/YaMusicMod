@@ -1,0 +1,175 @@
+/* ========================================================
+   DelTracks Stylesheet
+   Author: xokeza
+   ======================================================== */
+
+/* Стили значка восстановленного трека (компактный верификационный бейдж) */
+.deltracks-mark-container {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin-left: 6px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.deltracks-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 5px;
+    background: rgba(29, 161, 242, 0.12);
+    border: 1px solid rgba(29, 161, 242, 0.4);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #1DA1F2;
+    letter-spacing: 0.01em;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 6px rgba(29, 161, 242, 0.15);
+}
+
+.deltracks-badge:hover {
+    background: rgba(29, 161, 242, 0.22);
+    border-color: rgba(29, 161, 242, 0.8);
+    color: #4dc2f6;
+    box-shadow: 0 0 10px rgba(29, 161, 242, 0.35);
+    transform: translateY(-1px) scale(1.02);
+}
+
+.deltracks-badge svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* Тултип для значка */
+#deltracks-tooltip {
+    position: fixed;
+    z-index: 2147483647;
+    pointer-events: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #fff;
+    background: rgba(20, 22, 28, 0.96);
+    border: 1px solid rgba(29, 161, 242, 0.4);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 10px rgba(29, 161, 242, 0.2);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+#deltracks-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Красивая галочка автора xokeza */
+.xokeza-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    width: 17px;
+    height: 17px;
+    vertical-align: middle;
+    flex-shrink: 0;
+    position: relative;
+    cursor: default;
+}
+
+.xokeza-badge svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+    filter: drop-shadow(0 1px 3px rgba(29, 161, 242, 0.45));
+    animation: xokeza-check-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes xokeza-check-pop {
+    0% { transform: scale(0.6) rotate(-20deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Стили для синтезированной строки трека DelTracks */
+.deltracks-synthesized-track {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 12px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+    box-sizing: border-box;
+}
+
+.deltracks-synthesized-track:hover {
+    background-color: var(--ym-background-hover, rgba(255, 255, 255, 0.08));
+}
+
+.deltracks-synthesized-track .deltracks-cover-container {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: #1e1e24;
+}
+
+.deltracks-synthesized-track .deltracks-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.deltracks-synthesized-track .deltracks-info-container {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.deltracks-synthesized-track .deltracks-title-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deltracks-synthesized-track .deltracks-track-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--ym-text-primary, #ffffff);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deltracks-synthesized-track .deltracks-track-artist {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--ym-text-secondary, rgba(255, 255, 255, 0.6));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}

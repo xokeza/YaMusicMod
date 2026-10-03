@@ -846,7 +846,7 @@
                 s = i(85017);
             let r = (t) => {
                 let { track: e, callback: i, disclaimerRejectHandler: r } = t;
-                return (0, a.l)({ entity: e, entityType: s.n.TRACK, callback: i, onReject: r, preventDefaultWhenSafe: !1 });
+                return i;
             };
         },
         54714: (t) => {
@@ -1279,13 +1279,13 @@
                     } = (0, d.g)();
                 return (0, a.jsxs)('div', {
                     className: (0, s.$)(e, m().root, {
-                        [m().root_disabled]: !i.isAvailable && !i.hasModalAccess,
+                        [m().root_disabled]: !1,
                         [m().root_playing]: p,
                         [m().root_disliked]: i.isDisliked && x,
                         [m().root_current]: h,
                     }),
                     children: [
-                        (i.isAvailable || i.hasModalAccess) &&
+                        !0 &&
                             (0, a.jsxs)(a.Fragment, {
                                 children: [
                                     !v && (0, a.jsx)(u.P, { stopAnimation: !p, className: m().playingAnimation }),
@@ -1446,10 +1446,7 @@
                         ts();
                     }),
                     to = (0, n.c)((t) => {
-                        if (!r.isAvailable && !r.hasModalAccess) {
-                            L && r.isAvailableOnlyForPlus && O(), V && r.isAvailableOnlyForPlus && z.open();
-                            return;
-                        }
+                        /* bypassed */
                         if (X) return void O();
                         let e = !B && (2 === t.detail || (1 === t.detail && r.hasTrackLink && !w.modal.isOpened));
                         return Q && !e
@@ -1466,7 +1463,7 @@
                     'aria-label': U,
                     'data-intersection-property-id': $,
                     onClick: to,
-                    className: (0, s.$)(A().root, { [A().root_disabled]: !r.isAvailable, [A().root_current]: f && B }, i),
+                    className: (0, s.$)(A().root, { [A().root_disabled]: !1, [A().root_current]: f && B }, i),
                     ...S,
                     children: [y, tn, g, N],
                 });

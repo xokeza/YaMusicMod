@@ -276,7 +276,7 @@
                         : { whiteList: { a: ['href', 'target', 'rel'], br: [], strong: [], em: [], sup: [], sub: [], p: [], span: ['class'], div: ['class'] } };
                 return c(t, e);
             }
-            let d = (t) => 'https://'.concat(t.replace(/^(https*:\/\/)/, '')),
+            let d = (t) => (!t ? '' : (t.startsWith('data:') || t.startsWith('blob:') || t.startsWith('http://') || t.startsWith('https://')) ? t : 'https://'.concat(t.replace(/^(https*:\/\/)/, ''))),
                 h = 100,
                 g = [30, 50, 80, 100, 200, 300, 400, 600, 800, 1e3],
                 p = (t, e, s) => {

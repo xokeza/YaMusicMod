@@ -26,22 +26,21 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate storage
 .grunt
 
-# Bower dependency directory (https://bower.io/)
+# Bower dependency directory
 bower_components
 
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
+# Compiled binary addons
 build/Release
 
 # Dependency directories
+node_modules/
 jspm_packages/
-
-# Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
 # TypeScript cache
@@ -78,7 +77,7 @@ web_modules/
 .env.production.local
 .env.local
 
-# parcel-bundler cache (https://parceljs.org/)
+# parcel-bundler cache
 .cache
 .parcel-cache
 
@@ -90,79 +89,72 @@ web_modules/
 .nuxt
 dist
 
-# Gatsby files
-.cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
-
-# vuepress build output
-.vuepress/dist
-
-# vuepress v2.x temp and cache directory
+# Gatsby / Docusaurus / VuePress cache
 .temp
-.cache
 
-# Docusaurus cache and generated files
-.docusaurus
-
-# Serverless directories
+# Serverless / FuseBox / DynamoDB
 .serverless/
-
-# FuseBox cache
 .fusebox/
-
-# DynamoDB Local files
 .dynamodb/
-
-# TernJS port file
 .tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# yarn v2
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Agent / AI local workspace dirs
+.agents/
+.gemini/
+
+# Package managers lock files & builds
+package-lock.json
+yarn.lock
 .yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-.idea
-yarn.lock
-app.asar.bomba
-app.asar
-package-lock.json
-yamusic.exe
-build/app.asar.unpacked
 
+# Build artifacts & Electron binaries
+app.asar
+app.asar.bomba
+yamusic.exe
+build/
+builds/
+Release/
+Debug/
+output/
+obfuscated/
+temp/
+temp_build/
+extracted/
+extractedTestBuild/
+minified/
+asar/
 /asar
 /out
-/node_modules
-build/app.asar
-data.json
-extractedTestBuild
-temp_build
-extracted
-minified
-.DS_Store
-myVibe_bs64.js
 
-Release
-Debug
-build
-*.node
-output
-builds
-obfuscated
-src/main/lib/miniplayer/renderer/
+# Miniplayer generated / runtime files
 *.build-meta.json
-temp
+src/main/lib/miniplayer/renderer/
+miniplayer/node_modules/
+miniplayer/package-lock.json
 
-!src/node_modules/
-!src/node_modules/**/*
-
+# Native modules & misc temp files
+*.node
+data.json
+myVibe_bs64.js
 native/**/node_modules
 /src/main/native_modules/
-
 /modernized/**
 overlay-runtime
+
+# Preserved internal node_modules in src if any
+!src/node_modules/
+!src/node_modules/**/*
