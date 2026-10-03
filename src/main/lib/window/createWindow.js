@@ -42,7 +42,11 @@ const createWindow = async () => {
         const primaryDisplay = electron_1.screen.getPrimaryDisplay();
         store_js_1.setWindowMonitor(primaryDisplay.id);
     }
+    const appIconPath = process.platform === 'win32'
+        ? node_path_1.default.join(__dirname, '..', '..', 'app', 'favicon.ico')
+        : node_path_1.default.join(__dirname, '..', '..', 'app', 'icon_256.png');
     const window = new electron_1.BrowserWindow({
+        icon: appIconPath,
         show: false,
         frame: withFrame,
         titleBarStyle: 'hidden',
@@ -66,6 +70,10 @@ const createWindow = async () => {
         },
     });
     window.isMainWindow = true;
+    if (process.platform === 'darwin' && electron_1.app && electron_1.app.dock) {
+        try { electron_1.app.dock.setIcon(appIconPath); } catch (e) {}
+    }
+    try { window.setIcon(appIconPath); } catch (e) {}
     window.once('ready-to-show', () => {
         const shouldShow = !(store_js_1.getModSettings()?.window?.minimizedStart ?? false);
 

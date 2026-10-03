@@ -153,7 +153,7 @@ function createNativeModulesTask({ noNativeModules = (context) => context.option
                 return false;
             }
 
-            if (process.platform === 'darwin') {
+            if (process.platform !== 'win32') {
                 return false;
             }
 

@@ -3,6 +3,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.setupTray = exports.updateTrayMenu = void 0;
 const electron_1 = require('electron');
 const node_path_1 = require('node:path');
+const node_fs_1 = require('node:fs');
 const deviceInfo_js_1 = require('./deviceInfo.js');
 const updater_js_1 = require('./updater.js');
 const modUpdater_js_1 = require('./modUpdater.js');
@@ -18,7 +19,10 @@ const store_js_1 = require('./store.js');
 let tray = null;
 const createPngIcon = () => {
     const sizes = [22, 24, 32, 48, 16];
-    const iconsPath = (0, node_path_1.join)(process.resourcesPath, 'assets', 'icons');
+    const modIconsPath = (0, node_path_1.join)(__dirname, '..', '..', 'app', 'icons');
+    const iconsPath = (0, node_fs_1.existsSync)(modIconsPath)
+        ? modIconsPath
+        : (0, node_path_1.join)(process.resourcesPath, 'assets', 'icons');
     const icon = electron_1.nativeImage.createEmpty();
     for (const size of sizes) {
         const iconPath = (0, node_path_1.join)(iconsPath, `icon_${size}x${size}.png`);
@@ -32,6 +36,10 @@ const createPngIcon = () => {
     return icon;
 };
 const createIcoIcon = () => {
+    const modIco = (0, node_path_1.join)(__dirname, '..', '..', 'app', 'favicon.ico');
+    if ((0, node_fs_1.existsSync)(modIco)) {
+        return electron_1.nativeImage.createFromPath(modIco);
+    }
     const iconPath = (0, node_path_1.join)(process.resourcesPath, 'assets', 'icon.ico');
     return electron_1.nativeImage.createFromPath(iconPath);
 };
