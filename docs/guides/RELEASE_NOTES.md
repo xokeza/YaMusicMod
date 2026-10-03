@@ -1,10 +1,10 @@
-# YaMusicMod v1.34.3 ♡
+# YaMusicMod v1.34.4 ♡
 
 Обновление модификации для настольного приложения Яндекс Музыка (Linux, Windows, macOS).
 
 ---
 
-### ✦ Что нового в v1.34.3:
+### ✦ Что нового в v1.34.4:
 
 - **Интеграция с базой данных сайта LLMusic (xokeza.su)**:
     - Приложение автоматически подключается к базе данных сайта и связывает аккаунт пользователя.
@@ -23,9 +23,9 @@
 
 ### ◈ Загрузки по платформам:
 
-- ▷ **[YaMusicMod-Linux.zip](https://github.com/xokeza/YaMusicMod/releases/download/v1.34.3/YaMusicMod-Linux.zip)** — для Linux (Ubuntu, Debian, Fedora, Arch и др.). Внутри `app.asar` + инструкция `guide.md`.
-- ▷ **[YaMusicMod-Windows.zip](https://github.com/xokeza/YaMusicMod/releases/download/v1.34.3/YaMusicMod-Windows.zip)** — для Windows 10/11. Внутри `app.asar`, `install.bat`, `install.ps1`, `uninstall.bat` и `guide.md`.
-- ▷ **[YaMusicMod-macOS.zip](https://github.com/xokeza/YaMusicMod/releases/download/v1.34.3/YaMusicMod-macOS.zip)** — для macOS (Intel & Apple Silicon). Внутри `app.asar` + инструкция `guide.md`.
+- ▷ **[YaMusicMod-Linux.zip](https://github.com/xokeza/YaMusicMod/releases/download/v1.34.4/YaMusicMod-Linux.zip)** — для Linux (Ubuntu, Debian, Fedora, Arch и др.). Внутри `app.asar` + инструкция `guide.md`.
+- ▷ **[YaMusicMod-Windows.zip](https://github.com/xokeza/YaMusicMod/releases/download/v1.34.4/YaMusicMod-Windows.zip)** — для Windows 10/11. Внутри `app.asar`, `install.bat`, `install.ps1`, `uninstall.bat` и `guide.md`.
+- ▷ **[YaMusicMod-macOS.zip](https://github.com/xokeza/YaMusicMod/releases/download/v1.34.4/YaMusicMod-macOS.zip)** — для macOS (Intel & Apple Silicon). Внутри `app.asar` + инструкция `guide.md`.
 
 > [!NOTE]
 > **О мобильных устройствах (Android / iOS):**

@@ -1082,6 +1082,7 @@ const handleApplicationEvents = (window) => {
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {
         eventsLogger.info("Event received", events_js_1.Events.DOWNLOAD_MOD_UPDATE);
         try {
+            let isFinished = false;
             const callback = (progressRenderer, progressWindow) => {
                 sendProgressBarChange(window, "modUpdateToast", progressRenderer * 100);
                 if (typeof window?.setProgressBar === "function" && progressWindow !== undefined) {
@@ -1090,7 +1091,9 @@ const handleApplicationEvents = (window) => {
             };
             const throttled = throttle(callback, PROGRESS_BAR_THROTTLE_MS);
             const safeCallback = (progressRenderer, progressWindow) => {
+                if (isFinished) return;
                 if (progressRenderer >= 1 || progressRenderer < 0) {
+                    isFinished = true;
                     callback(progressRenderer, progressWindow);
                 } else {
                     throttled(progressRenderer, progressWindow);

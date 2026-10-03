@@ -1,6 +1,6 @@
 {
     "name": "llmusic-asar",
-    "version": "1.34.3",
+    "version": "1.34.4",
     "description": "Mod for Yandex Music Desktop",
     "main": "index.js",
     "scripts": {

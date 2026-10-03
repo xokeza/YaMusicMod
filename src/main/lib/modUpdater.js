@@ -1,8 +1,8 @@
 const zlib = require('node:zlib');
 const exec = require('child_process').exec;
 const promisify = require('util').promisify;
-const fsPromise = require('fs').promises;
 const fs = require('original-fs');
+const fsPromise = fs.promises;
 const path = require('path');
 const semver = require('semver');
 const axios = require('axios');
@@ -253,6 +253,7 @@ class ModUpdater {
             if (typeof callback === 'function') {
                 callback(1.1, -1);
             }
+            this.isInstalling = false;
             setTimeout(() => {
                 this.onInstallUpdate().catch((e) => {
                     this.logger.error('Auto install after download failed:', e);
@@ -289,7 +290,12 @@ class ModUpdater {
             targetAsar = path.join(process.resourcesPath, 'app.asar');
         }
 
-        this.logger.log(`Replacing ${targetAsar} with ${downloadedAsar}`);
+        let realTarget = targetAsar;
+        try {
+            realTarget = await fsPromise.realpath(targetAsar);
+        } catch {}
+
+        this.logger.log(`Replacing ${targetAsar} (real: ${realTarget}) with ${downloadedAsar}`);
 
         if (process.platform === 'win32') {
             const batPath = path.join(tempDir, 'update.bat');
@@ -301,20 +307,20 @@ class ModUpdater {
         } else if (process.platform === 'linux') {
             let isWritable = false;
             try {
-                await fsPromise.access(targetAsar, fs.constants.W_OK);
+                await fsPromise.access(realTarget, fs.constants.W_OK);
                 isWritable = true;
             } catch {
                 isWritable = false;
             }
 
             if (isWritable) {
-                await fsPromise.copyFile(downloadedAsar, targetAsar);
+                await fsPromise.copyFile(downloadedAsar, realTarget);
                 electron.app.relaunch();
                 electron.app.exit(0);
             } else {
                 // Not writable by user -> prompt polkit password dialog via pkexec
                 this.logger.log('File is root-owned, launching pkexec...');
-                const child = spawn('pkexec', ['/bin/cp', downloadedAsar, targetAsar], {
+                const child = spawn('pkexec', ['/bin/cp', downloadedAsar, realTarget], {
                     stdio: 'inherit',
                 });
                 child.on('close', (code) => {
@@ -324,6 +330,7 @@ class ModUpdater {
                         electron.app.exit(0);
                     } else {
                         this.logger.error('pkexec copy cancelled or failed with code:', code);
+                        this.isInstalling = false;
                     }
                 });
             }

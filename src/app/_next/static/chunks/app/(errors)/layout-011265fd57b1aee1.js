@@ -233,7 +233,7 @@
                         }, [i]),
                         d = (e) => {
                             let t = a({ id: 'offline.download' });
-                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Перезапуск…'), t;
+                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание ' + Math.min(100, Math.max(0, Math.round(e))) + '%') : e > 100 && (t = 'Перезапуск…'), t;
                         },
                         N = (0, s.useMemo)(
                             () =>
