@@ -45,8 +45,13 @@ const createWindow = async () => {
     const appIconPath = process.platform === 'win32'
         ? node_path_1.default.join(__dirname, '..', '..', 'app', 'favicon.ico')
         : node_path_1.default.join(__dirname, '..', '..', 'app', 'icon_256.png');
+    const appNativeIcon = electron_1.nativeImage.createFromPath(appIconPath);
+    const iconObj = appNativeIcon.isEmpty() ? appIconPath : appNativeIcon;
+    if (process.platform === 'linux' && typeof electron_1.app.setDesktopName === 'function') {
+        try { electron_1.app.setDesktopName('YandexMusic.desktop'); } catch (e) {}
+    }
     const window = new electron_1.BrowserWindow({
-        icon: appIconPath,
+        icon: iconObj,
         show: false,
         frame: withFrame,
         titleBarStyle: 'hidden',
@@ -71,9 +76,9 @@ const createWindow = async () => {
     });
     window.isMainWindow = true;
     if (process.platform === 'darwin' && electron_1.app && electron_1.app.dock) {
-        try { electron_1.app.dock.setIcon(appIconPath); } catch (e) {}
+        try { electron_1.app.dock.setIcon(iconObj); } catch (e) {}
     }
-    try { window.setIcon(appIconPath); } catch (e) {}
+    try { window.setIcon(iconObj); } catch (e) {}
     window.once('ready-to-show', () => {
         const shouldShow = !(store_js_1.getModSettings()?.window?.minimizedStart ?? false);
 
