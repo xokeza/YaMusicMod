@@ -1077,14 +1077,17 @@ const handleApplicationEvents = (window) => {
     });
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {
-        eventsLogger.info("Event received", events_js_1.Events.DOWNLOAD_MOD_UPDATE, data);
+        eventsLogger.info("Event received", events_js_1.Events.DOWNLOAD_MOD_UPDATE);
         try {
-            const modUpdater = (0, modUpdater_js_1.getModUpdater)();
-            const targetUrl = data?.downloadUrl || data?.releaseUrl || modUpdater?.latestData?.downloadUrl || modUpdater?.latestData?.releaseUrl || "https://github.com/xokeza/YaMusicMod/releases/latest";
-            eventsLogger.info("Opening mod download url:", targetUrl);
-            await electron_1.shell.openExternal(targetUrl);
+            const callback = (progressRenderer, progressWindow) => {
+                sendProgressBarChange(window, "modUpdateToast", progressRenderer * 100);
+                if (typeof window?.setProgressBar === "function" && progressWindow !== undefined) {
+                    window.setProgressBar(progressWindow);
+                }
+            };
+            await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(callback);
         } catch (err) {
-            eventsLogger.error("Failed to open mod download url:", err);
+            eventsLogger.error("Failed to download mod update in-app:", err);
         }
     });
 
