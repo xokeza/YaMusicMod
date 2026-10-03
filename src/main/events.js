@@ -851,6 +851,14 @@ const handleApplicationEvents = (window) => {
         if (updater.latestAvailableVersion) {
             (0, exports.sendUpdateAvailable)(window, updater.latestAvailableVersion);
         }
+        try {
+            const modUpdater = (0, modUpdater_js_1.getModUpdater)();
+            if (modUpdater && modUpdater.hasUpdateAvailable()) {
+                (0, exports.sendModUpdateAvailable)(window, modUpdater.currentVersion, modUpdater.latestVersion, modUpdater.latestData);
+            }
+        } catch (e) {
+            eventsLogger.error("Failed to notify mod update on app ready:", e);
+        }
         if ((0, store_js_1.isFirstLaunch)()) {
             (0, exports.sendAnalyticsOnFirstLaunch)(window);
         }
@@ -1061,18 +1069,24 @@ const handleApplicationEvents = (window) => {
     });
 
     electron_1.ipcMain.on(events_js_1.Events.DOWNLOAD_MOD_UPDATE, async (event, data) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.DOWNLOAD_MOD_UPDATE);
-
-        let callback = (progressRenderer, progressWindow) => {
-            sendProgressBarChange(window, 'modUpdateToast', progressRenderer * 100);
-            window.setProgressBar(progressWindow);
-        };
-        await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, PROGRESS_BAR_THROTTLE_MS));
+        eventsLogger.info("Event received", events_js_1.Events.DOWNLOAD_MOD_UPDATE, data);
+        try {
+            const modUpdater = (0, modUpdater_js_1.getModUpdater)();
+            const targetUrl = data?.downloadUrl || data?.releaseUrl || modUpdater?.latestData?.downloadUrl || modUpdater?.latestData?.releaseUrl || "https://github.com/xokeza/YaMusicMod/releases/latest";
+            eventsLogger.info("Opening mod download url:", targetUrl);
+            await electron_1.shell.openExternal(targetUrl);
+        } catch (err) {
+            eventsLogger.error("Failed to open mod download url:", err);
+        }
     });
 
     electron_1.ipcMain.on(events_js_1.Events.INSTALL_MOD_UPDATE, async (event, data) => {
-        eventsLogger.info(`Event received`, events_js_1.Events.INSTALL_MOD_UPDATE);
-        await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
+        eventsLogger.info("Event received", events_js_1.Events.INSTALL_MOD_UPDATE);
+        try {
+            await (0, modUpdater_js_1.getModUpdater)().onInstallUpdate();
+        } catch (err) {
+            eventsLogger.error("Failed to install mod update:", err);
+        }
     });
 
     const setNativeStoreValue = (key, value) => {
@@ -1268,9 +1282,26 @@ const sendUpdateAvailable = (window, version) => {
     eventsLogger.info('Event sent', events_js_1.Events.UPDATE_AVAILABLE, version);
 };
 exports.sendUpdateAvailable = sendUpdateAvailable;
-const sendModUpdateAvailable = (window, currVersion, newVersion) => {
+const sendModUpdateAvailable = (window, currVersion, newVersion, meta = {}) => {
     window.webContents.send(events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion, Date.now());
-    eventsLogger.info('Event sent', events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion);
+    eventsLogger.info("Event sent", events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion);
+
+    const downloadUrl = meta?.downloadUrl || meta?.releaseUrl || `https://github.com/xokeza/YaMusicMod/releases/tag/v${newVersion}`;
+    const releaseUrl = meta?.releaseUrl || "https://github.com/xokeza/YaMusicMod/releases/latest";
+
+    sendBasicToastCreate(
+        window,
+        "modUpdateAvailable",
+        `Доступно обновление мода ${newVersion}`,
+        "Скачать",
+        events_js_1.Events.DOWNLOAD_MOD_UPDATE,
+        {
+            currVersion,
+            newVersion,
+            downloadUrl,
+            releaseUrl,
+        }
+    );
 };
 exports.sendModUpdateAvailable = sendModUpdateAvailable;
 const sendBasicToastCreate = (window = mainWindow, toastID, message, dismissable, actionEvent, actionPayload) => {

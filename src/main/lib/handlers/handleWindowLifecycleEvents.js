@@ -167,9 +167,10 @@ const handleWindowLifecycleEvents = (window) => {
                 }
             }
 
-            // Ctrl+R or F5: Full reload & check/pull updates from GitHub
+            // Ctrl+R or F5: In-place reload without closing or quitting app
             if ((input.control && input.key.toLowerCase() === "r") || input.key === "F5") {
-                lifecycleLogger.info("Ctrl+R / F5 pressed: full reload and checking GitHub releases...");
+                lifecycleLogger.info("Ctrl+R / F5 pressed: in-place reload, checking mod updates without quitting...");
+                event.preventDefault();
                 try {
                     const modUpdater = (0, modUpdater_js_1.getModUpdater)();
                     if (modUpdater) {
@@ -193,6 +194,17 @@ const handleWindowLifecycleEvents = (window) => {
                     }
                 }
             `);
+
+        try {
+            const modUpdater = (0, modUpdater_js_1.getModUpdater)();
+            if (modUpdater && modUpdater.hasUpdateAvailable()) {
+                setTimeout(() => {
+                    (0, events_js_1.sendModUpdateAvailable)(window, modUpdater.currentVersion, modUpdater.latestVersion, modUpdater.latestData);
+                }, 1500);
+            }
+        } catch (e) {
+            lifecycleLogger.error("Failed to notify mod update after reload:", e);
+        }
     });
 };
 exports.handleWindowLifecycleEvents = handleWindowLifecycleEvents;

@@ -7,262 +7,224 @@ const path = require('path');
 const semver = require('semver');
 const Logger_js_1 = require('../packages/logger/Logger.js');
 const config_js_1 = require('../config.js');
-const https = require('https');
-const axios = require('axios');
 const electron = require('electron');
 const { spawn } = require('child_process');
-const spawnAsync = promisify(spawn);
-
-const execPromise = promisify(exec);
-const zstdDecompressPromise = zlib.zstdDecompress ? promisify(zlib.zstdDecompress) : undefined;
 
 exports.getModUpdater = exports.ModUpdater = void 0;
 
-const UPDATE_CHECK_URL = `https://xokeza.su/llmusic/api/v1/mod/latest`;
-const APP_ASAR_PATH = electron.app.getAppPath();
-const APP_ASAR_TMP_DOWNLOAD_PATH = path.join(electron.app.getAppPath(), '../../', 'temp\\app.asar');
-const APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH = path.join(electron.app.getAppPath(), '../../', 'temp\\app.asar.zst');
-const TMP_PATH = path.join(electron.app.getAppPath(), '../../', '\\temp');
-const currentVersion = config_js_1.config.modification.version;
-let latestVersion = currentVersion;
+const UPDATE_CHECK_URL = 'https://xokeza.su/llmusic/api/v1/mod/latest';
+const GITHUB_API_URL = 'https://api.github.com/repos/xokeza/YaMusicMod/releases/latest';
 
 class ModUpdater {
     updaterId = null;
     onModUpdateListeners = [];
     logger;
-    latestUrl = undefined;
-    compressionType = null; // null | 'zstd'
+    currentVersion;
+    latestVersion;
+    latestData = null;
+    isChecking = false;
 
     constructor() {
         this.logger = new Logger_js_1.Logger('ModUpdaterLogger');
-        this.logger.log('Initializing...');
-        this.clearCaches().then(() => {
-            this.logger.log('Initialized');
-        });
+        this.currentVersion = config_js_1.config?.modification?.version || '1.34.0';
+        this.latestVersion = this.currentVersion;
+        this.logger.log(`Initialized. Current mod version: ${this.currentVersion}`);
     }
 
     start() {
-        this.check();
+        this.check().catch((err) => {
+            this.logger.error('Initial update check error:', err?.message || err);
+        });
+        if (this.updaterId) {
+            clearInterval(this.updaterId);
+        }
+        const pollInterval = config_js_1.config?.common?.UPDATE_POLL_INTERVAL_MS || 3600000;
         this.updaterId = setInterval(() => {
-            this.check();
-        }, config_js_1.config.common.UPDATE_POLL_INTERVAL_MS);
-        this.logger.log('Loop started');
+            this.check().catch((err) => {
+                this.logger.error('Periodic update check error:', err?.message || err);
+            });
+        }, pollInterval);
+        this.logger.log('Update check loop started');
     }
 
     stop() {
         if (this.updaterId) {
             clearInterval(this.updaterId);
-            this.logger.log('Loop stopped');
+            this.updaterId = null;
+            this.logger.log('Update check loop stopped');
         }
     }
 
-    async clearCaches() {
-        this.logger.log('Clearing caches');
-        await this.deleteFile(APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH);
-        await this.deleteFile(APP_ASAR_TMP_DOWNLOAD_PATH);
-        this.logger.log('Caches cleared');
-    }
-
-    async check(force = false) {
-        const url = await this.checkForUpdates(force);
-        if (!url) return;
-
-        this.latestUrl = url;
-
-        force
-            ? this.onModUpdateListeners.forEach((listener) => {
-                  listener(currentVersion, latestVersion);
-              })
-            : setTimeout(() => {
-                  this.onModUpdateListeners.forEach((listener) => {
-                      listener(currentVersion, latestVersion);
-                  });
-              }, 5000);
+    hasUpdateAvailable() {
+        return Boolean(this.latestData && semver.gt(this.latestVersion, this.currentVersion));
     }
 
     async checkForUpdates(force = false) {
-        const response = await fetch(UPDATE_CHECK_URL);
-        const releaseData = await response.json();
+        let releaseData = null;
 
-        if (force || semver.lt(latestVersion, releaseData.mod.modVersion)) {
-            latestVersion = releaseData.mod.modVersion;
-            this.logger.log('New version available:', currentVersion, '->', latestVersion);
+        // 1. Try primary URL (xokeza.su API)
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 7000);
+            const response = await fetch(UPDATE_CHECK_URL, {
+                signal: controller.signal,
+                headers: { Accept: 'application/json' },
+            });
+            clearTimeout(timeoutId);
 
-            const downloadUrl = releaseData.mod.downloadUrl;
-            this.compressionType = downloadUrl && downloadUrl.endsWith('.zst') ? 'zstd' : null;
-
-            if (this.compressionType === 'zstd' && !zstdDecompressPromise) {
-                this.logger.error('zstd decompression is not supported in current Node.js runtime');
-                return false;
-            }
-
-            return downloadUrl;
-        }
-
-        return false;
-    }
-
-    async downloadFile(url, filePath, callback) {
-        const httpsAgent = new https.Agent({
-            rejectUnauthorized: false,
-            keepAlive: true,
-        });
-
-        const writer = fs.createWriteStream(filePath);
-        let isFinished = false;
-        let isError = false;
-
-        const response = await axios.get(url, {
-            httpsAgent,
-            responseType: 'stream',
-        });
-
-        const totalLength = parseInt(response.headers['content-length'] || '0', 10);
-        let downloadedLength = 0;
-
-        response.data.on('data', (chunk) => {
-            if (isFinished) return;
-
-            downloadedLength += chunk.length;
-            const progress = totalLength > 0 ? downloadedLength / totalLength : 0;
-
-            callback(progress, progress);
-            writer.write(chunk);
-        });
-
-        response.data.on('end', () => {
-            if (isFinished) return;
-            isFinished = true;
-            writer.end();
-        });
-
-        response.data.on('error', async (err) => {
-            if (isFinished) return;
-            isFinished = true;
-            isError = true;
-            writer.end();
-            await this.deleteFile(filePath);
-            this.logger.error('Download error:', err.message);
-            callback(-1, -1);
-        });
-
-        writer.on('finish', async () => {
-            try {
-                if (!isFinished) return;
-                if (isError) return;
-
-                this.logger.log('Downloaded update.');
-
-                if (this.compressionType === 'zstd') {
-                    await this.decompressZstdFile(APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH, APP_ASAR_TMP_DOWNLOAD_PATH);
+            if (response.ok) {
+                const text = await response.text();
+                try {
+                    releaseData = JSON.parse(text);
+                } catch (e) {
+                    this.logger.warn('Failed to parse response from primary API:', e.message);
                 }
-
-                callback(1.1, -1);
-                this.logger.log('Update ready to install.');
-            } catch (e) {
-                await this.deleteFile(filePath);
-                this.logger.error('Error writing file:', e);
-                callback(-1, -1);
+            } else {
+                this.logger.warn(`Primary API returned HTTP ${response.status}`);
             }
-        });
-
-        writer.on('error', async (err) => {
-            await this.deleteFile(filePath);
-            this.logger.error('Error writing file:', err);
-            callback(-1, -1);
-        });
-    }
-
-    async deleteFile(filePath) {
-        if (fs.existsSync(filePath)) {
-            await fsPromise.unlink(filePath);
-            this.logger.log('Deleted: ', filePath);
-        } else {
-            this.logger.log('File not found, skipping delete: ', filePath);
-        }
-    }
-
-    async renameFile(oldPath, newPath) {
-        await fsPromise.rename(oldPath, newPath);
-        this.logger.log('Renamed: ', oldPath, ' to ', newPath);
-    }
-
-    async copyFile(oldPath, newPath) {
-        await execPromise(`copy ${oldPath} ${newPath}`);
-        this.logger.log('Copied: ', oldPath, ' to ', newPath);
-    }
-
-    async openPatcher(filePath) {
-        const cmdScript = `llmusic://patch/from_mod/${encodeURIComponent(filePath)}`;
-        this.logger.log('Opening external detached: ', cmdScript);
-        await this.openExternalDetached(cmdScript);
-    }
-
-    async openExternalDetached(url) {
-        let command;
-        let args;
-
-        if (process.platform === 'win32') {
-            command = 'cmd.exe';
-            args = ['/c', 'start', '', url];
-        } else if (process.platform === 'darwin') {
-            command = 'open';
-            args = [url];
-        } else {
-            command = 'xdg-open';
-            args = [url];
+        } catch (err) {
+            this.logger.warn('Primary update check failed, attempting GitHub fallback:', err.message);
         }
 
-        const child = spawn(command, args, {
-            detached: true,
-            stdio: 'ignore',
-        });
+        // 2. Fallback to GitHub Releases API if needed
+        if (!releaseData || !releaseData.mod || !releaseData.mod.modVersion) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 7000);
+                const ghResponse = await fetch(GITHUB_API_URL, {
+                    signal: controller.signal,
+                    headers: {
+                        Accept: 'application/vnd.github.v3+json',
+                        'User-Agent': 'LLMusic-ModUpdater/1.0',
+                    },
+                });
+                clearTimeout(timeoutId);
 
-        child.unref();
-    }
+                if (ghResponse.ok) {
+                    const ghData = await ghResponse.json();
+                    if (ghData && ghData.tag_name) {
+                        const cleanVersion = ghData.tag_name.replace(/^v/i, '');
+                        let asarUrl = null;
+                        let linuxZip = null;
+                        let windowsZip = null;
+                        let macosZip = null;
 
-    async decompressZstdFile(oldPath, newPath) {
-        if (!zstdDecompressPromise) {
-            throw new Error('zstd decompression is not supported in current Node.js runtime');
+                        if (Array.isArray(ghData.assets)) {
+                            for (const asset of ghData.assets) {
+                                const name = asset.name || '';
+                                const url = asset.browser_download_url;
+                                if (name === 'app.asar') asarUrl = url;
+                                else if (/linux/i.test(name)) linuxZip = url;
+                                else if (/windows/i.test(name)) windowsZip = url;
+                                else if (/macos|darwin/i.test(name)) macosZip = url;
+                            }
+                        }
+
+                        releaseData = {
+                            mod: {
+                                modVersion: cleanVersion,
+                                version: cleanVersion,
+                                tag: ghData.tag_name,
+                                downloadUrl: asarUrl || ghData.html_url,
+                                releaseUrl: ghData.html_url,
+                                releases: {
+                                    asar: asarUrl,
+                                    linux: linuxZip,
+                                    windows: windowsZip,
+                                    macos: macosZip,
+                                },
+                            },
+                        };
+                    }
+                }
+            } catch (ghErr) {
+                this.logger.error('GitHub API fallback also failed:', ghErr.message);
+            }
         }
 
-        const compressedData = await fsPromise.readFile(oldPath);
-        const decompressedData = await zstdDecompressPromise(compressedData);
+        if (!releaseData || !releaseData.mod || !releaseData.mod.modVersion) {
+            this.logger.log('No release data found');
+            return null;
+        }
 
-        await fsPromise.writeFile(newPath, decompressedData);
-        this.logger.log('Decompressed: ', oldPath, ' to ', newPath);
+        const remoteVersion = releaseData.mod.modVersion;
+        const isNewer = semver.valid(remoteVersion) && semver.valid(this.currentVersion) ? semver.gt(remoteVersion, this.currentVersion) : false;
+
+        this.logger.log(`Update check result: remote=${remoteVersion}, current=${this.currentVersion}, isNewer=${isNewer}`);
+
+        if (force || isNewer) {
+            this.latestVersion = remoteVersion;
+
+            let platformDownloadUrl = releaseData.mod.downloadUrl;
+            const releases = releaseData.mod.releases;
+            if (releases) {
+                if (process.platform === 'linux' && releases.linux) {
+                    platformDownloadUrl = releases.linux;
+                } else if (process.platform === 'win32' && releases.windows) {
+                    platformDownloadUrl = releases.windows;
+                } else if (process.platform === 'darwin' && releases.macos) {
+                    platformDownloadUrl = releases.macos;
+                }
+            }
+
+            this.latestData = {
+                version: remoteVersion,
+                downloadUrl: platformDownloadUrl || releaseData.mod.downloadUrl,
+                releaseUrl: releaseData.mod.releaseUrl || `https://github.com/xokeza/YaMusicMod/releases/tag/v${remoteVersion}`,
+                releases: releaseData.mod.releases || {},
+            };
+
+            return this.latestData;
+        }
+
+        return null;
+    }
+
+    async check(force = false) {
+        if (this.isChecking) return null;
+        this.isChecking = true;
+        try {
+            const updateInfo = await this.checkForUpdates(force);
+            if (updateInfo) {
+                this.onModUpdateListeners.forEach((listener) => {
+                    try {
+                        listener(this.currentVersion, updateInfo.version, updateInfo);
+                    } catch (e) {
+                        this.logger.error('Error in onModUpdate listener:', e);
+                    }
+                });
+            }
+            return updateInfo;
+        } finally {
+            this.isChecking = false;
+        }
     }
 
     onUpdateAvailable(listener) {
         this.onModUpdateListeners.push(listener);
     }
 
-    async onUpdateDownload(callback) {
-        if (!fs.existsSync(TMP_PATH)) {
-            await fsPromise.mkdir(TMP_PATH);
-            this.logger.log('Created temp directory.');
+    async onInstallUpdate() {
+        this.logger.log('onInstallUpdate called');
+        const url = this.latestData?.downloadUrl || this.latestData?.releaseUrl || 'https://github.com/xokeza/YaMusicMod/releases/latest';
+        try {
+            await electron.shell.openExternal(url);
+        } catch (err) {
+            this.logger.error('Failed to open release URL:', err);
         }
-
-        const downloadPath = this.compressionType === 'zstd' ? APP_ASAR_TMP_ZSTD_DOWNLOAD_PATH : APP_ASAR_TMP_DOWNLOAD_PATH;
-
-        await this.downloadFile(this.latestUrl, downloadPath, callback);
     }
 
-    async onInstallUpdate() {
-        this.logger.log('Installing update...');
-        try {
-            await this.openPatcher(APP_ASAR_TMP_DOWNLOAD_PATH);
-        } catch (e) {
-            this.logger.error('Update install failed:', e);
+    async onUpdateDownload(callback) {
+        // Fallback progress reporting if called
+        if (typeof callback === 'function') {
+            callback(1.1, -1);
         }
-        this.logger.log('Update installed.');
     }
 }
 
 exports.ModUpdater = ModUpdater;
 exports.getModUpdater = (() => {
     let modUpdater;
-
     return () => {
         if (!modUpdater) {
             modUpdater = new ModUpdater();

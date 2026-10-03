@@ -163,15 +163,10 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
             (0, events_js_1.sendUpdateAvailable)(window, version);
         });
     }
-    modUpdater.onUpdateAvailable((currVersion, newVersion) => {
-        (0, events_js_1.sendModUpdateAvailable)(window, currVersion, newVersion);
-        let callback = (progressRenderer, progressWindow) => {
-            events_js_1.sendProgressBarChange(window, 'modUpdateToast', progressRenderer * 100);
-            window.setProgressBar(progressWindow);
-        };
-        (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(throttle(callback, 200));
+    modUpdater.onUpdateAvailable((currVersion, newVersion, meta) => {
+        (0, events_js_1.sendModUpdateAvailable)(window, currVersion, newVersion, meta);
     });
-    if (store_js_1.getModSettings()?.appAutoUpdates.enableModAutoUpdate && deviceInfo_js_1.devicePlatform === platform_js_1.Platform.WINDOWS) {
+    if (store_js_1.getModSettings()?.appAutoUpdates?.enableModAutoUpdate ?? true) {
         modUpdater.start();
     }
 })();
