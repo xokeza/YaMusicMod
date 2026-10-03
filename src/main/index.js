@@ -157,7 +157,7 @@ const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
     if ([platform_js_1.Platform.WINDOWS, platform_js_1.Platform.LINUX].includes(deviceInfo_js_1.devicePlatform)) {
         (0, customTitleBar_js_1.createCustomTitleBar)(window);
     }
-    if (store_js_1.getModSettings()?.appAutoUpdates.enableAppAutoUpdate ?? config_js_1.config.app.enableAutoUpdate) {
+    if (store_js_1.getModSettings()?.appAutoUpdates?.enableAppAutoUpdate ?? false) {
         updater.start();
         updater.onUpdate((version) => {
             (0, events_js_1.sendUpdateAvailable)(window, version);

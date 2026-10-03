@@ -848,7 +848,7 @@ const handleApplicationEvents = (window) => {
         if (state_js_1.state.deeplink) {
             (0, handleDeeplink_js_1.navigateToDeeplink)(window, state_js_1.state.deeplink);
         }
-        if (updater.latestAvailableVersion) {
+        if (store_js_1.getModSettings()?.appAutoUpdates?.enableAppAutoUpdate && updater.latestAvailableVersion) {
             (0, exports.sendUpdateAvailable)(window, updater.latestAvailableVersion);
         }
         try {
@@ -1297,25 +1297,8 @@ const sendModUpdateAvailable = (window, currVersion, newVersion, meta = {}) => {
         try {
             window.webContents.send(events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion, Date.now());
             eventsLogger.info("Event sent", events_js_1.Events.MOD_UPDATE_AVAILABLE, currVersion, newVersion);
-
-            const downloadUrl = meta?.downloadUrl || meta?.releaseUrl || `https://github.com/xokeza/YaMusicMod/releases/tag/v${newVersion}`;
-            const releaseUrl = meta?.releaseUrl || "https://github.com/xokeza/YaMusicMod/releases/latest";
-
-            sendBasicToastCreate(
-                window,
-                "modUpdateAvailable",
-                `Доступно обновление мода ${newVersion}`,
-                "Скачать",
-                events_js_1.Events.DOWNLOAD_MOD_UPDATE,
-                {
-                    currVersion,
-                    newVersion,
-                    downloadUrl,
-                    releaseUrl,
-                }
-            );
         } catch (err) {
-            eventsLogger.error("Failed to send mod update toast:", err);
+            eventsLogger.error("Failed to send mod update:", err);
         }
     };
 

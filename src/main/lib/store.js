@@ -230,7 +230,7 @@ const init = () => {
             showAudioQualityOnNewWave: true,
         },
         appAutoUpdates: {
-            enableAppAutoUpdate: store.get(store_js_1.StoreKeys.AUTO_UPDATES) ?? true,
+            enableAppAutoUpdate: false,
             enableAppAutoUpdateByProbability: false,
             enableModAutoUpdate: true,
         },

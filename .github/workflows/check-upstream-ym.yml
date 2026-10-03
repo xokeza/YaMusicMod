@@ -1,0 +1,108 @@
+name: Check Upstream Yandex Music
+
+on:
+  schedule:
+    # Check every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check_upstream:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check upstream version
+        id: check_version
+        run: |
+          node -e '
+          const axios = require("axios");
+          const yaml = require("js-yaml");
+          const fs = require("fs");
+          const semver = require("semver");
+
+          async function main() {
+              const res = await axios.get("https://desktop.app.music.yandex.net/stable/latest-linux.yml");
+              const ymData = yaml.load(res.data);
+              const upstreamVer = ymData.version;
+
+              const pkg = JSON.parse(fs.readFileSync("src/package.json", "utf8"));
+              const localVer = pkg.version;
+
+              console.log(`Upstream YM version: ${upstreamVer}`);
+              console.log(`Local YM version: ${localVer}`);
+
+              const hasNew = semver.gt(upstreamVer, localVer);
+              console.log(`Has new upstream version: ${hasNew}`);
+
+              const out = process.env.GITHUB_OUTPUT;
+              if (out) {
+                  fs.appendFileSync(out, `has_new=${hasNew}\n`);
+                  fs.appendFileSync(out, `upstream_ver=${upstreamVer}\n`);
+                  fs.appendFileSync(out, `local_ver=${localVer}\n`);
+              }
+          }
+          main().catch(err => {
+              console.error(err);
+              process.exit(1);
+          });
+          '
+
+      - name: Process update if new upstream version available
+        if: steps.check_version.outputs.has_new == 'true'
+        env:
+          UPSTREAM_VER: ${{ steps.check_version.outputs.upstream_ver }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          BRANCH_NAME="upstream/ym-${UPSTREAM_VER}"
+          git checkout -b "${BRANCH_NAME}"
+
+          # Update version in src/package.json
+          node -e '
+          const fs = require("fs");
+          const ver = process.env.UPSTREAM_VER;
+
+          let srcPkg = JSON.parse(fs.readFileSync("src/package.json", "utf8"));
+          srcPkg.version = ver;
+          if (srcPkg.modification) {
+              srcPkg.modification.realYMVersion = ver;
+          }
+          fs.writeFileSync("src/package.json", JSON.stringify(srcPkg, null, 4) + "\n", "utf8");
+          '
+
+          # Build updated app.asar
+          node toolset.js build --noNativeModules
+
+          git add src/package.json builds/latest/app.asar
+          git commit -m "chore(upstream): update Yandex Music base to v${UPSTREAM_VER}"
+          git push origin "${BRANCH_NAME}" --force
+
+          # Create PR using gh CLI
+          gh pr create \
+            --title "chore(upstream): update Yandex Music base to v${UPSTREAM_VER}" \
+            --body "Автоматическое обновление базовой версии Яндекс Музыки до v${UPSTREAM_VER}.
+
+          - Upstream version: \`${UPSTREAM_VER}\`
+          - Обновлен \`src/package.json\`
+          - Пересобран \`builds/latest/app.asar\`" \
+            --base main \
+            --head "${BRANCH_NAME}" || echo "PR already exists"
