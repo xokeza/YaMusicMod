@@ -228,11 +228,12 @@
                             window.desktopEvents?.send?.(o.E.INSTALL_MOD_UPDATE), null == r || r();
                         }, [r]),
                         b = (0, s.useCallback)(() => {
+                            i(0);
                             window.desktopEvents?.send?.(o.E.DOWNLOAD_MOD_UPDATE);
-                        }, []),
+                        }, [i]),
                         d = (e) => {
                             let t = a({ id: 'offline.download' });
-                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Установить'), t;
+                            return e < 0 ? (t = a({ id: 'offline.download' })) : e >= 0 && e <= 100 ? (t = 'Скачивание…') : e > 100 && (t = 'Перезапуск…'), t;
                         },
                         N = (0, s.useMemo)(
                             () =>
@@ -267,17 +268,13 @@
                         }, []);
                     return (
                         (0, s.useEffect)(() => {
-                            return (
-                                window.desktopEvents?.on?.(o.E.PROGRESS_BAR_CHANGE, u),
-                                () => {
-                                    window.desktopEvents?.off?.(o.E.PROGRESS_BAR_CHANGE, u);
-                                }
-                            );
+                            const unsub = window.desktopEvents?.on?.(o.E.PROGRESS_BAR_CHANGE, u);
+                            return () => {
+                                if (typeof unsub === 'function') unsub();
+                            };
                         }, [u]),
                         (0, s.useEffect)(() => {
-                            let e = () => {
-                                null == r || r();
-                            };
+                            let e = () => {};
                             return (
                                 window.desktopEvents?.on?.(o.E.MOD_UPDATE_AVAILABLE, e),
                                 () => {

@@ -852,15 +852,13 @@ const handleApplicationEvents = (window) => {
         try {
             const modUpdater = (0, modUpdater_js_1.getModUpdater)();
             if (modUpdater) {
-                if (modUpdater.hasUpdateAvailable()) {
-                    (0, exports.sendModUpdateAvailable)(window, modUpdater.currentVersion, modUpdater.latestVersion, modUpdater.latestData);
-                } else {
-                    modUpdater.check().then((info) => {
-                        if (info && modUpdater.hasUpdateAvailable()) {
-                            (0, exports.sendModUpdateAvailable)(window, modUpdater.currentVersion, modUpdater.latestVersion, modUpdater.latestData);
-                        }
-                    }).catch(() => {});
-                }
+                modUpdater.check().then(() => {
+                    if (modUpdater.hasUpdateAvailable()) {
+                        (0, exports.sendModUpdateAvailable)(window, modUpdater.currentVersion, modUpdater.latestVersion, modUpdater.latestData);
+                    }
+                }).catch((err) => {
+                    eventsLogger.error("Failed to check mod update on app ready:", err);
+                });
             }
         } catch (e) {
             eventsLogger.error("Failed to notify mod update on app ready:", e);
@@ -1083,7 +1081,15 @@ const handleApplicationEvents = (window) => {
                     window.setProgressBar(progressWindow);
                 }
             };
-            await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(callback);
+            const throttled = throttle(callback, PROGRESS_BAR_THROTTLE_MS);
+            const safeCallback = (progressRenderer, progressWindow) => {
+                if (progressRenderer >= 1 || progressRenderer < 0) {
+                    callback(progressRenderer, progressWindow);
+                } else {
+                    throttled(progressRenderer, progressWindow);
+                }
+            };
+            await (0, modUpdater_js_1.getModUpdater)().onUpdateDownload(safeCallback);
         } catch (err) {
             eventsLogger.error("Failed to download mod update in-app:", err);
         }
@@ -1304,10 +1310,10 @@ const sendModUpdateAvailable = (window, currVersion, newVersion, meta = {}) => {
 
     if (window.webContents.isLoading()) {
         window.webContents.once("did-finish-load", () => {
-            setTimeout(doSend, 1500);
+            setTimeout(doSend, 1200);
         });
     } else {
-        doSend();
+        setTimeout(doSend, 400);
     }
 };
 exports.sendModUpdateAvailable = sendModUpdateAvailable;

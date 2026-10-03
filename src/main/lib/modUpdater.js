@@ -25,6 +25,8 @@ class ModUpdater {
     latestData = null;
     isChecking = false;
     isDownloading = false;
+    isInstalling = false;
+    checkingPromise = null;
 
     constructor() {
         this.logger = new Logger_js_1.Logger('ModUpdaterLogger');
@@ -176,23 +178,29 @@ class ModUpdater {
     }
 
     async check(force = false) {
-        if (this.isChecking) return null;
-        this.isChecking = true;
-        try {
-            const updateInfo = await this.checkForUpdates(force);
-            if (updateInfo) {
-                this.onModUpdateListeners.forEach((listener) => {
-                    try {
-                        listener(this.currentVersion, updateInfo.version, updateInfo);
-                    } catch (e) {
-                        this.logger.error('Error in onModUpdate listener:', e);
-                    }
-                });
-            }
-            return updateInfo;
-        } finally {
-            this.isChecking = false;
+        if (this.checkingPromise) {
+            return this.checkingPromise;
         }
+        this.checkingPromise = (async () => {
+            this.isChecking = true;
+            try {
+                const updateInfo = await this.checkForUpdates(force);
+                if (updateInfo) {
+                    this.onModUpdateListeners.forEach((listener) => {
+                        try {
+                            listener(this.currentVersion, updateInfo.version, updateInfo);
+                        } catch (e) {
+                            this.logger.error('Error in onModUpdate listener:', e);
+                        }
+                    });
+                }
+                return updateInfo;
+            } finally {
+                this.isChecking = false;
+                this.checkingPromise = null;
+            }
+        })();
+        return this.checkingPromise;
     }
 
     onUpdateAvailable(listener) {
@@ -243,8 +251,13 @@ class ModUpdater {
 
             this.logger.log('Download finished successfully. Ready to install.');
             if (typeof callback === 'function') {
-                callback(1.1, -1); // progress > 100 changes button to "Установить"!
+                callback(1.1, -1);
             }
+            setTimeout(() => {
+                this.onInstallUpdate().catch((e) => {
+                    this.logger.error('Auto install after download failed:', e);
+                });
+            }, 800);
         } catch (err) {
             this.logger.error('Download update failed:', err?.message || err);
             if (typeof callback === 'function') {
@@ -256,6 +269,11 @@ class ModUpdater {
     }
 
     async onInstallUpdate() {
+        if (this.isInstalling) {
+            this.logger.warn('Installation already in progress');
+            return;
+        }
+        this.isInstalling = true;
         this.logger.log('Starting in-app mod installation and relaunch...');
         const tempDir = path.join(electron.app.getPath('temp'), 'llmusic_update');
         const downloadedAsar = path.join(tempDir, 'app.asar');
@@ -276,7 +294,7 @@ class ModUpdater {
         if (process.platform === 'win32') {
             const batPath = path.join(tempDir, 'update.bat');
             const execPath = process.execPath;
-            const batContent = `@echo off\r\nchcp 65001 >nul\r\ntimeout /t 1 /nobreak >nul\r\ncopy /y "${downloadedAsar}" "${targetAsar}" >nul\r\nstart "" "${execPath}"\r\nexit\r\n`;
+            const batContent = "@echo off\r\nchcp 65001 >nul\r\ntimeout /t 1 /nobreak >nul\r\ncopy /y \"" + downloadedAsar + "\" \"" + targetAsar + "\" >nul\r\nstart \"\" \"" + execPath + "\"\r\nexit\r\n";
             await fsPromise.writeFile(batPath, batContent);
             spawn('cmd.exe', ['/c', batPath], { detached: true, stdio: 'ignore' }).unref();
             electron.app.exit(0);
@@ -323,7 +341,7 @@ class ModUpdater {
                 electron.app.relaunch();
                 electron.app.exit(0);
             } else {
-                const cmd = `osascript -e 'do shell script "cp \\"${downloadedAsar}\\" \\"${targetAsar}\\"" with administrator privileges'`;
+                const cmd = `osascript -e 'do shell script "cp \\${downloadedAsar}\\ \\${targetAsar}\" with administrator privileges'`;
                 exec(cmd, (err) => {
                     if (!err) {
                         electron.app.relaunch();
