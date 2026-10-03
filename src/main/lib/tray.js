@@ -36,10 +36,14 @@ const createPngIcon = () => {
     return icon;
 };
 const createIcoIcon = () => {
-    const modIco = (0, node_path_1.join)(__dirname, '..', '..', 'app', 'favicon.ico');
-    if ((0, node_fs_1.existsSync)(modIco)) {
-        return electron_1.nativeImage.createFromPath(modIco);
-    }
+    try {
+        const modIco = (0, node_path_1.join)(__dirname, '..', '..', 'app', 'favicon.ico');
+        if ((0, node_fs_1.existsSync)(modIco)) {
+            const buf = (0, node_fs_1.readFileSync)(modIco);
+            const img = electron_1.nativeImage.createFromBuffer(buf);
+            if (!img.isEmpty()) return img;
+        }
+    } catch (e) {}
     const iconPath = (0, node_path_1.join)(process.resourcesPath, 'assets', 'icon.ico');
     return electron_1.nativeImage.createFromPath(iconPath);
 };

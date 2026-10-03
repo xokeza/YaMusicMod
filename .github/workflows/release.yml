@@ -41,7 +41,11 @@ jobs:
           mkdir -p dist/windows
           cp builds/latest/app.asar dist/windows/app.asar
           cp docs/guides/guide_windows.md dist/windows/guide.md
-          (cd dist/windows && zip -r ../packages/YaMusicMod-Windows.zip app.asar guide.md)
+          cp docs/guides/install.bat dist/windows/install.bat
+          cp docs/guides/install.ps1 dist/windows/install.ps1
+          cp docs/guides/uninstall.bat dist/windows/uninstall.bat
+          cp src/app/favicon.ico dist/windows/icon.ico
+          (cd dist/windows && zip -r ../packages/YaMusicMod-Windows.zip app.asar guide.md install.bat install.ps1 uninstall.bat icon.ico)
 
           # macOS
           mkdir -p dist/macos

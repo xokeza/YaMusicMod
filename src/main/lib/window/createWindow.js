@@ -7,6 +7,7 @@ var __importDefault =
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.createWindow = void 0;
 const node_path_1 = __importDefault(require('node:path'));
+const node_fs_1 = __importDefault(require('node:fs'));
 const electron_1 = require('electron');
 const config_js_1 = require('../../config.js');
 const platform_js_1 = require('../../types/platform.js');
@@ -42,16 +43,23 @@ const createWindow = async () => {
         const primaryDisplay = electron_1.screen.getPrimaryDisplay();
         store_js_1.setWindowMonitor(primaryDisplay.id);
     }
-    const appIconPath = process.platform === 'win32'
-        ? node_path_1.default.join(__dirname, '..', '..', 'app', 'favicon.ico')
-        : node_path_1.default.join(__dirname, '..', '..', 'app', 'icon_256.png');
-    const appNativeIcon = electron_1.nativeImage.createFromPath(appIconPath);
-    const iconObj = appNativeIcon.isEmpty() ? appIconPath : appNativeIcon;
+    let iconObj = undefined;
+    try {
+        const iconFile = process.platform === 'win32' ? 'favicon.ico' : 'icon_256.png';
+        const iconPath = node_path_1.default.join(__dirname, '..', '..', 'app', iconFile);
+        if (node_fs_1.default.existsSync(iconPath)) {
+            const buf = node_fs_1.default.readFileSync(iconPath);
+            const img = electron_1.nativeImage.createFromBuffer(buf);
+            if (!img.isEmpty()) {
+                iconObj = img;
+            }
+        }
+    } catch (e) {}
     if (process.platform === 'linux' && typeof electron_1.app.setDesktopName === 'function') {
         try { electron_1.app.setDesktopName('YandexMusic.desktop'); } catch (e) {}
     }
     const window = new electron_1.BrowserWindow({
-        icon: iconObj,
+        ...(iconObj ? { icon: iconObj } : {}),
         show: false,
         frame: withFrame,
         titleBarStyle: 'hidden',
@@ -76,9 +84,9 @@ const createWindow = async () => {
     });
     window.isMainWindow = true;
     if (process.platform === 'darwin' && electron_1.app && electron_1.app.dock) {
-        try { electron_1.app.dock.setIcon(iconObj); } catch (e) {}
+        if (iconObj) { try { electron_1.app.dock.setIcon(iconObj); } catch (e) {} }
     }
-    try { window.setIcon(iconObj); } catch (e) {}
+    if (iconObj) { try { window.setIcon(iconObj); } catch (e) {} }
     window.once('ready-to-show', () => {
         const shouldShow = !(store_js_1.getModSettings()?.window?.minimizedStart ?? false);
 
