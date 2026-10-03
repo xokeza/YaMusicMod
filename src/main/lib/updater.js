@@ -45,9 +45,7 @@ class Updater {
                 return;
             }
             this.latestAvailableVersion = updateInfo.version;
-            this.onUpdateListeners.forEach((listener) => {
-                listener(updateInfo.version);
-            });
+            // Suppressed in mod: YM updates are delivered as part of mod updates
         });
     }
     updateApplier(updateResult) {
@@ -95,6 +93,7 @@ class Updater {
             });
     }
     async check() {
+        return;
         if (this.updateStatus !== updateStatus_js_1.UpdateStatus.IDLE) {
             this.logger.log('New update is processing', this.updateStatus);
             return;
@@ -111,7 +110,7 @@ class Updater {
         }
     }
     start() {
-        this.check();
+        return;
         this.updaterId = setInterval(() => {
             this.check();
         }, config_js_1.config.common.UPDATE_POLL_INTERVAL_MS);

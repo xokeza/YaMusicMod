@@ -848,9 +848,7 @@ const handleApplicationEvents = (window) => {
         if (state_js_1.state.deeplink) {
             (0, handleDeeplink_js_1.navigateToDeeplink)(window, state_js_1.state.deeplink);
         }
-        if (store_js_1.getModSettings()?.appAutoUpdates?.enableAppAutoUpdate && updater.latestAvailableVersion) {
-            (0, exports.sendUpdateAvailable)(window, updater.latestAvailableVersion);
-        }
+        // Suppressed: YM updates are delivered as part of mod updates
         try {
             const modUpdater = (0, modUpdater_js_1.getModUpdater)();
             if (modUpdater) {
@@ -1289,8 +1287,7 @@ const sendLoadReleaseNotes = ({ window, needToShowReleaseNotes, sortedDescReleas
 };
 exports.sendLoadReleaseNotes = sendLoadReleaseNotes;
 const sendUpdateAvailable = (window, version) => {
-    window.webContents.send(events_js_1.Events.UPDATE_AVAILABLE, version);
-    eventsLogger.info('Event sent', events_js_1.Events.UPDATE_AVAILABLE, version);
+    eventsLogger.info('Official YM update prompt suppressed in mod:', version);
 };
 exports.sendUpdateAvailable = sendUpdateAvailable;
 const sendModUpdateAvailable = (window, currVersion, newVersion, meta = {}) => {
